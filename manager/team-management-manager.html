@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Management - DeskFlo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8fafc; /* bg-slate-50 */
+      }
+      .modal-backdrop {
+        transition: opacity 0.3s ease;
+      }
+      .modal-content {
+        transition: transform 0.3s ease;
+      }
+      .dropdown-menu {
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+      }
+    </style>
+  </head>
+  <body class="text-slate-800">
+    <div class="flex h-screen bg-slate-50">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow-sm flex-shrink-0">
+        <div class="p-6 flex items-center space-x-3">
+          <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <span class="text-xl font-bold text-slate-800">DeskFlo</span>
+        </div>
+        <nav class="mt-6 px-4">
+          <a href="dashboard-manager.html" class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+            </svg>
+            Dashboard
+          </a>
+          <a href="programmer-manager.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0112 8a5 5 0 014.5 4.33A6.97 6.97 0 0017 16c0 .34.024.673.07 1h-4.14zM6.07 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 016 8a5 5 0 014.5 4.33A6.97 6.97 0 0011 16c0 .34.024.673.07 1H6.07z"
+              />
+            </svg>
+            Programmer
+          </a>
+          <a href="team-management-manager.html" class="flex items-center px-4 py-3 mt-2 bg-slate-100 text-indigo-600 font-semibold rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v-1h8v1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 15v-1a4 4 0 00-4-4H8a4 4 0 00-4 4v1h12z" />
+            </svg>
+            Team Management
+          </a>
+          <a href="jobs-manager.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm0 4a1 1 0 000 2h6a1 1 0 100-2H7zm0 4a1 1 0 000 2h3a1 1 0 100-2H7z" clip-rule="evenodd" />
+            </svg>
+            Jobs
+          </a>
+          <a href="calendar-manager.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V4a1 1 0 10-2 0v1H7V4a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+            </svg>
+            Calendar
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col h-screen overflow-y-hidden">
+        <header class="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-slate-200 p-6 flex justify-between items-center">
+          <h1 class="text-xl font-semibold text-slate-900">Team Management</h1>
+          <div class="flex items-center space-x-5">
+            <div class="relative">
+              <button id="notification-button" class="text-slate-500 hover:text-slate-800 relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
+                </svg>
+                <span class="absolute -top-1 -right-1 flex h-3 w-3"
+                  ><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span
+                ></span>
+              </button>
+              <div id="notification-dropdown" class="dropdown-menu absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
+                <div class="px-4 py-2 font-semibold text-slate-800 border-b">Notifikasi</div>
+                <a href="#" class="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-100"
+                  ><p class="font-medium">Budi Santoso mengajukan review</p>
+                  <p class="text-xs text-slate-500">Tugas: Fixing Bug on Login Page</p></a
+                >
+              </div>
+            </div>
+            <div class="relative">
+              <div id="profile-button" class="flex items-center space-x-3 cursor-pointer">
+                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/34d399/ffffff?text=S" alt="Manager Avatar" />
+                <div>
+                  <p class="font-semibold text-sm">Siti Aminah</p>
+                  <p class="text-xs text-slate-500">Manager</p>
+                </div>
+              </div>
+              <div id="profile-dropdown" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
+                <a href="edit-profile-manager.html?from=team-management-manager.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Edit Profil</a>
+                <a href="#" id="logout-button" class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50">Log Out</a>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div class="flex-1 overflow-y-auto">
+          <div class="p-8">
+            <div id="team-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Team cards will be injected here -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Edit Team Modal -->
+    <div id="team-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden modal-backdrop opacity-0">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-md transform scale-95 modal-content">
+        <div class="flex justify-between items-center p-6 border-b">
+          <h3 id="modal-title" class="text-xl font-bold">Edit Tim</h3>
+          <button class="close-modal-button text-slate-500 hover:text-slate-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <label for="team-name" class="block text-sm font-medium text-slate-700">Nama Tim</label
+            ><input type="text" id="team-name" class="mt-1 block w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-md shadow-sm sm:text-sm" disabled />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Pilih Anggota</label>
+            <div id="member-list" class="mt-2 space-y-2 border rounded-lg p-3 max-h-48 overflow-y-auto"></div>
+          </div>
+        </div>
+        <div class="p-6 bg-slate-50 rounded-b-2xl flex justify-end space-x-3">
+          <button class="close-modal-button bg-white text-slate-700 px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100">Batal</button
+          ><button id="save-team-button" class="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700">Simpan Perubahan</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { showNotification } from "../notifications.js";
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- Mock Data ---
+        const allProgrammers = [
+          { id: 1, name: "Budi Santoso", avatar: "https://placehold.co/100x100/ec4899/ffffff?text=B" },
+          { id: 2, name: "Citra Lestari", avatar: "https://placehold.co/100x100/8b5cf6/ffffff?text=C" },
+          { id: 3, name: "Doni Firmansyah", avatar: "https://placehold.co/100x100/10b981/ffffff?text=D" },
+          { id: 4, name: "Eka Putri", avatar: "https://placehold.co/100x100/f59e0b/ffffff?text=E" },
+          { id: 5, name: "Fahmi Idris", avatar: "https://placehold.co/100x100/3b82f6/ffffff?text=F" },
+        ];
+
+        // Manager Siti Aminah (ID 6) manages Tim Frontend (ID 1)
+        const managerTeamId = 1;
+
+        let teams = [
+          { id: 1, name: "Tim Frontend", members: [2, 3] },
+          { id: 2, name: "Tim API", members: [1, 3] },
+        ];
+
+        // --- DOM Elements ---
+        const teamListContainer = document.getElementById("team-list");
+        const teamModal = document.getElementById("team-modal");
+        const closeModalButtons = document.querySelectorAll(".close-modal-button");
+        const modalTitle = document.getElementById("modal-title");
+        const teamNameInput = document.getElementById("team-name");
+        const memberListContainer = document.getElementById("member-list");
+        const saveTeamButton = document.getElementById("save-team-button");
+        const profileButton = document.getElementById("profile-button");
+        const profileDropdown = document.getElementById("profile-dropdown");
+        const notificationButton = document.getElementById("notification-button");
+        const notificationDropdown = document.getElementById("notification-dropdown");
+
+        // --- Modal Management ---
+        const openModal = (modal) => {
+          modal.classList.remove("hidden");
+          setTimeout(() => {
+            modal.classList.remove("opacity-0");
+            modal.querySelector(".modal-content").classList.remove("scale-95");
+          }, 10);
+        };
+
+        const closeModal = (modal) => {
+          if (modal) {
+            modal.classList.add("opacity-0");
+            modal.querySelector(".modal-content").classList.add("scale-95");
+            setTimeout(() => modal.classList.add("hidden"), 300);
+          }
+        };
+
+        closeModalButtons.forEach((button) => {
+          button.addEventListener("click", (e) => {
+            const modalToClose = e.target.closest(".modal-backdrop");
+            if (modalToClose) closeModal(modalToClose);
+          });
+        });
+
+        // --- Main Logic ---
+        function renderTeams() {
+          teamListContainer.innerHTML = "";
+          // Filter to only show the team managed by this manager
+          const managedTeam = teams.find((t) => t.id === managerTeamId);
+
+          if (managedTeam) {
+            const team = managedTeam;
+            const teamMembers = team.members.map((memberId) => allProgrammers.find((p) => p.id === memberId));
+            const memberListHtml = teamMembers.map((member) => `<li class="flex items-center space-x-2"><img class="h-6 w-6 rounded-full" src="${member.avatar}" alt="${member.name}"><span>${member.name}</span></li>`).join("");
+
+            const card = document.createElement("div");
+            card.className = "bg-white rounded-xl shadow-sm p-5";
+            card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">${team.name}</h3>
+                            <p class="text-sm text-slate-500">${team.members.length} Anggota</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="edit-team-button text-slate-500 hover:text-indigo-600" data-team-id="${team.id}"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" /></svg></button>
+                        </div>
+                    </div>
+                    <ul class="mt-4 space-y-2 text-sm text-slate-700">${memberListHtml}</ul>
+                `;
+            teamListContainer.appendChild(card);
+          }
+          attachActionListeners();
+        }
+
+        function populateMemberCheckboxes(selectedMemberIds = []) {
+          memberListContainer.innerHTML = "";
+          allProgrammers.forEach((p) => {
+            const isChecked = selectedMemberIds.includes(p.id) ? "checked" : "";
+            const checkboxHtml = `
+                    <div class="flex items-center">
+                        <input id="member-${p.id}" value="${p.id}" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" ${isChecked}>
+                        <label for="member-${p.id}" class="ml-3 text-sm text-slate-600">${p.name}</label>
+                    </div>
+                `;
+            memberListContainer.insertAdjacentHTML("beforeend", checkboxHtml);
+          });
+        }
+
+        function attachActionListeners() {
+          document.querySelectorAll(".edit-team-button").forEach((button) => {
+            button.addEventListener("click", (e) => {
+              const teamId = parseInt(e.currentTarget.dataset.teamId);
+              const team = teams.find((t) => t.id === teamId);
+              modalTitle.textContent = `Edit Anggota: ${team.name}`;
+              teamNameInput.value = team.name;
+              populateMemberCheckboxes(team.members);
+              saveTeamButton.dataset.teamId = teamId;
+              openModal(teamModal);
+            });
+          });
+        }
+
+        saveTeamButton.addEventListener("click", async (e) => {
+          const teamId = parseInt(e.currentTarget.dataset.teamId);
+          const team = teams.find((t) => t.id === teamId);
+          const selectedMemberIds = Array.from(memberListContainer.querySelectorAll("input:checked")).map((input) => parseInt(input.value));
+
+          const originalButtonText = saveTeamButton.innerHTML;
+          saveTeamButton.disabled = true;
+          saveTeamButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
+
+          try {
+            // Simulate API call
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            team.members = selectedMemberIds;
+            renderTeams();
+            showNotification("Anggota tim berhasil diperbarui!", "success");
+          } catch (error) {
+            showNotification(`Gagal memperbarui tim: ${error.message}`, "error");
+          } finally {
+            saveTeamButton.disabled = false;
+            saveTeamButton.innerHTML = originalButtonText;
+            closeModal(teamModal);
+          }
+        });
+
+        // --- Dropdown Logic ---
+        function closeAllDropdowns() {
+          if (profileDropdown && !profileDropdown.classList.contains("hidden")) {
+            profileDropdown.classList.add("opacity-0", "scale-95");
+            setTimeout(() => profileDropdown.classList.add("hidden"), 200);
+          }
+          if (notificationDropdown && !notificationDropdown.classList.contains("hidden")) {
+            notificationDropdown.classList.add("opacity-0", "scale-95");
+            setTimeout(() => notificationDropdown.classList.add("hidden"), 200);
+          }
+        }
+
+        function toggleDropdown(dropdownToToggle) {
+          const isHidden = dropdownToToggle.classList.contains("hidden");
+          closeAllDropdowns();
+          if (isHidden) {
+            dropdownToToggle.classList.remove("hidden");
+            setTimeout(() => {
+              dropdownToToggle.classList.remove("opacity-0", "scale-95");
+            }, 10);
+          }
+        }
+
+        if (profileButton) {
+          profileButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleDropdown(profileDropdown);
+          });
+        }
+        if (notificationButton) {
+          notificationButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleDropdown(notificationDropdown);
+          });
+        }
+        window.addEventListener("click", () => closeAllDropdowns());
+
+        // --- Logout Logic ---
+        const logoutButton = document.getElementById("logout-button");
+        if (logoutButton) {
+          logoutButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            console.log("Logging out...");
+            window.location.href = "../authentication.html?status=logout_success";
+          });
+        }
+
+        // Initial render
+        renderTeams();
+      });
+    </script>
+  </body>
+</html>

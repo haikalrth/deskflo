@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profil - DeskFlo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8fafc;
+      }
+      .dropdown-menu {
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+      }
+      .notification-popup {
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+      }
+    </style>
+  </head>
+  <body class="text-slate-800">
+    <div class="flex h-screen">
+      <!-- Sidebar untuk Manager -->
+      <aside class="w-64 bg-white shadow-sm flex-shrink-0">
+        <div class="p-6 flex items-center space-x-3">
+          <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <span class="text-xl font-bold text-slate-800">DeskFlo</span>
+        </div>
+        <nav class="mt-6 px-4">
+          <a href="dashboard-manager.html" class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+            </svg>
+            Dashboard
+          </a>
+          <a href="programmer-manager.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0112 8a5 5 0 014.5 4.33A6.97 6.97 0 0017 16c0 .34.024.673.07 1h-4.14zM6.07 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 016 8a5 5 0 014.5 4.33A6.97 6.97 0 0011 16c0 .34.024.673.07 1H6.07z"
+              />
+            </svg>
+            Programmer
+          </a>
+          <a href="team-management-manager.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v-1h8v1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 15v-1a4 4 0 00-4-4H8a4 4 0 00-4 4v1h12z" />
+            </svg>
+            Team Management
+          </a>
+          <a href="jobs-manager.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm0 4a1 1 0 000 2h6a1 1 0 100-2H7zm0 4a1 1 0 000 2h3a1 1 0 100-2H7z" clip-rule="evenodd" />
+            </svg>
+            Jobs
+          </a>
+          <a href="calendar-manager.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V4a1 1 0 10-2 0v1H7V4a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+            </svg>
+            Calendar
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 overflow-y-auto">
+        <header class="sticky top-0 z-10 bg-white/70 backdrop-blur-sm border-b border-slate-200 p-6 flex justify-between items-center">
+          <h1 class="text-2xl font-bold text-slate-900">Edit Profil</h1>
+          <div class="flex items-center space-x-5">
+            <div class="relative">
+              <button id="notification-button" class="text-slate-500 hover:text-slate-800 relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
+                </svg>
+                <span class="absolute -top-1 -right-1 flex h-3 w-3"
+                  ><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span
+                ></span>
+              </button>
+              <div id="notification-dropdown" class="dropdown-menu absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
+                <div class="px-4 py-2 font-semibold text-slate-800 border-b">Notifikasi</div>
+                <a href="#" class="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-100"
+                  ><p class="font-medium">Budi Santoso mengajukan review</p>
+                  <p class="text-xs text-slate-500">Tugas: Fixing Bug on Login Page</p></a
+                >
+              </div>
+            </div>
+            <div class="relative">
+              <div id="profile-button" class="flex items-center space-x-3 cursor-pointer">
+                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/34d399/ffffff?text=S" alt="Manager Avatar" />
+                <div>
+                  <p class="font-semibold text-sm">Siti Aminah</p>
+                  <p class="text-xs text-slate-500">Manager</p>
+                </div>
+              </div>
+              <div id="profile-dropdown" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
+                <a href="edit-profile-manager.html" id="edit-profile-link" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Edit Profil</a>
+                <a href="#" id="logout-button" class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50">Log Out</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="p-6">
+          <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm">
+            <!-- Tabs -->
+            <div class="border-b border-slate-200">
+              <nav class="relative flex px-6" aria-label="Tabs">
+                <a href="#" id="profile-tab" class="tab-link text-indigo-600 px-3 py-4 font-semibold text-sm">Profil</a>
+                <a href="#" id="security-tab" class="tab-link text-slate-500 hover:text-slate-700 px-3 py-4 font-medium text-sm">Keamanan</a>
+                <span id="tab-glider" class="absolute bottom-[-1px] h-0.5 bg-indigo-600 transition-all duration-300 ease-in-out"></span>
+              </nav>
+            </div>
+
+            <!-- Content Area -->
+            <div id="profile-content">
+              <form id="profile-form">
+                <div class="p-6 md:p-8">
+                  <div class="flex items-center space-x-6">
+                    <div class="relative">
+                      <img id="avatar-preview" class="w-24 h-24 rounded-full object-cover" src="https://placehold.co/100x100/34d399/ffffff?text=S" alt="Siti Aminah's avatar" />
+                      <div class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                        <label for="avatar-upload" class="cursor-pointer text-white">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                            />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                        </label>
+                        <input type="file" id="avatar-upload" class="hidden" accept="image/png, image/jpeg, image/gif" />
+                      </div>
+                    </div>
+                    <div>
+                      <label for="avatar-upload-button" class="bg-white text-slate-700 px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100 text-sm font-semibold cursor-pointer"> Ganti Foto </label>
+                      <input type="file" id="avatar-upload-button" class="hidden" accept="image/png, image/jpeg, image/gif" />
+                      <p class="text-xs text-slate-500 mt-2">JPG, GIF atau PNG. Ukuran maks 1MB.</p>
+                    </div>
+                  </div>
+
+                  <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label for="full-name" class="block text-sm font-medium text-slate-700">Nama Lengkap</label>
+                      <input type="text" id="full-name" value="Siti Aminah" class="mt-1 block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                    </div>
+                    <div>
+                      <label for="email" class="block text-sm font-medium text-slate-700">Alamat Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        value="siti.aminah@example.com"
+                        class="mt-1 block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label for="npm" class="block text-sm font-medium text-slate-700">ID Pegawai</label>
+                      <input type="text" id="npm" value="MGR-001" class="mt-1 block w-full px-4 py-2.5 bg-slate-100 border-slate-300 rounded-lg shadow-sm sm:text-sm" disabled />
+                    </div>
+                    <div>
+                      <label for="major" class="block text-sm font-medium text-slate-700">Jabatan</label>
+                      <input type="text" id="major" value="Manager" class="mt-1 block w-full px-4 py-2.5 bg-slate-100 border-slate-300 rounded-lg shadow-sm sm:text-sm" disabled />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-6 bg-slate-50 rounded-b-2xl flex justify-end space-x-3 mt-4">
+                  <button id="cancel-profile-button" type="button" class="bg-white text-slate-700 px-5 py-2.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-sm font-semibold">Batal</button>
+                  <button type="submit" class="bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-indigo-700 text-sm">Simpan Perubahan</button>
+                </div>
+              </form>
+            </div>
+
+            <div id="security-content" class="hidden">
+              <form id="security-form">
+                <div class="p-6 md:p-8">
+                  <h3 class="text-lg font-semibold text-slate-800">Ubah Kata Sandi</h3>
+                  <p class="text-sm text-slate-500 mt-1">Pastikan Anda menggunakan kata sandi yang kuat.</p>
+
+                  <div class="mt-6 space-y-6">
+                    <div>
+                      <label for="current-password" class="block text-sm font-medium text-slate-700">Kata Sandi Saat Ini</label>
+                      <div class="relative mt-1">
+                        <input type="password" id="current-password" class="password-field block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer toggle-password">
+                          <svg class="h-5 w-5 text-gray-400 eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                          </svg>
+                          <svg class="h-5 w-5 text-gray-400 eye-closed hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                            <path d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.955 9.955 0 00-4.512 1.074L3.707 2.293z" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <label for="new-password" class="block text-sm font-medium text-slate-700">Kata Sandi Baru</label>
+                      <div class="relative mt-1">
+                        <input type="password" id="new-password" class="password-field block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer toggle-password">
+                          <svg class="h-5 w-5 text-gray-400 eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                          </svg>
+                          <svg class="h-5 w-5 text-gray-400 eye-closed hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                            <path d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.955 9.955 0 00-4.512 1.074L3.707 2.293z" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <label for="confirm-password" class="block text-sm font-medium text-slate-700">Konfirmasi Kata Sandi Baru</label>
+                      <div class="relative mt-1">
+                        <input type="password" id="confirm-password" class="password-field block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer toggle-password">
+                          <svg class="h-5 w-5 text-gray-400 eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                          </svg>
+                          <svg class="h-5 w-5 text-gray-400 eye-closed hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                            <path d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.955 9.955 0 00-4.512 1.074L3.707 2.293z" />
+                          </svg>
+                        </span>
+                      </div>
+                      <p id="password-match-message" class="text-xs text-emerald-600 mt-2 hidden">
+                        <svg class="inline w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        Kata sandi cocok.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-6 bg-slate-50 rounded-b-2xl flex justify-end space-x-3 mt-4">
+                  <button id="cancel-security-button" type="button" class="bg-white text-slate-700 px-5 py-2.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-sm font-semibold">Batal</button>
+                  <button id="save-password-button" type="submit" class="bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-indigo-700 text-sm hidden">Simpan Perubahan</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Notifikasi Pop-up -->
+    <div id="notification-popup" class="fixed bottom-5 right-5 bg-emerald-500 text-white py-3 px-5 rounded-lg shadow-lg transform translate-y-20 opacity-0 notification-popup z-50">
+      <div class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <p id="notification-title" class="font-semibold">Sukses!</p>
+          <p id="notification-message" class="text-sm">Aksi berhasil dilakukan.</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- URL Parameter for Return Navigation ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnPage = urlParams.get("from") || "dashboard-manager.html";
+
+        // --- Notifikasi ---
+        const notificationPopup = document.getElementById("notification-popup");
+        const showNotification = (title, message) => {
+          if (notificationPopup) {
+            document.getElementById("notification-title").textContent = title;
+            document.getElementById("notification-message").textContent = message;
+            notificationPopup.classList.remove("opacity-0", "translate-y-20");
+            setTimeout(() => {
+              notificationPopup.classList.add("opacity-0", "translate-y-20");
+            }, 4000);
+          }
+        };
+
+        // --- Dropdown Logic ---
+        const profileButton = document.getElementById("profile-button");
+        const profileDropdown = document.getElementById("profile-dropdown");
+        const notificationButton = document.getElementById("notification-button");
+        const notificationDropdown = document.getElementById("notification-dropdown");
+
+        function closeAllDropdowns() {
+          if (profileDropdown && !profileDropdown.classList.contains("hidden")) {
+            profileDropdown.classList.add("opacity-0", "scale-95");
+            setTimeout(() => profileDropdown.classList.add("hidden"), 200);
+          }
+          if (notificationDropdown && !notificationDropdown.classList.contains("hidden")) {
+            notificationDropdown.classList.add("opacity-0", "scale-95");
+            setTimeout(() => notificationDropdown.classList.add("hidden"), 200);
+          }
+        }
+
+        function toggleDropdown(dropdownToToggle) {
+          const isHidden = dropdownToToggle.classList.contains("hidden");
+          closeAllDropdowns();
+          if (isHidden) {
+            dropdownToToggle.classList.remove("hidden");
+            setTimeout(() => {
+              dropdownToToggle.classList.remove("opacity-0", "scale-95");
+            }, 10);
+          }
+        }
+
+        if (profileButton) {
+          profileButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleDropdown(profileDropdown);
+          });
+        }
+        if (notificationButton) {
+          notificationButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleDropdown(notificationDropdown);
+          });
+        }
+        window.addEventListener("click", () => closeAllDropdowns());
+
+        // --- Avatar Upload Logic ---
+        const avatarUpload = document.getElementById("avatar-upload");
+        const avatarUploadButton = document.getElementById("avatar-upload-button");
+        const avatarPreview = document.getElementById("avatar-preview");
+
+        const handleFileSelect = (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              avatarPreview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+
+        if (avatarUpload) {
+          avatarUpload.addEventListener("change", handleFileSelect);
+        }
+        if (avatarUploadButton) {
+          avatarUploadButton.addEventListener("change", handleFileSelect);
+        }
+
+        // --- Tab Switching Logic ---
+        const profileTab = document.getElementById("profile-tab");
+        const securityTab = document.getElementById("security-tab");
+        const profileContent = document.getElementById("profile-content");
+        const securityContent = document.getElementById("security-content");
+        const tabGlider = document.getElementById("tab-glider");
+
+        function moveGlider(targetTab) {
+          const tabRect = targetTab.getBoundingClientRect();
+          const navRect = targetTab.parentElement.getBoundingClientRect();
+          tabGlider.style.width = `${tabRect.width}px`;
+          tabGlider.style.left = `${tabRect.left - navRect.left}px`;
+        }
+
+        if (profileTab && securityTab && profileContent && securityContent && tabGlider) {
+          // Initial position
+          moveGlider(profileTab);
+
+          profileTab.addEventListener("click", (e) => {
+            e.preventDefault();
+            securityContent.classList.add("hidden");
+            profileContent.classList.remove("hidden");
+
+            profileTab.classList.add("text-indigo-600");
+            profileTab.classList.remove("text-slate-500");
+            securityTab.classList.add("text-slate-500");
+            securityTab.classList.remove("text-indigo-600");
+
+            moveGlider(profileTab);
+          });
+
+          securityTab.addEventListener("click", (e) => {
+            e.preventDefault();
+            profileContent.classList.add("hidden");
+            securityContent.classList.remove("hidden");
+
+            securityTab.classList.add("text-indigo-600");
+            securityTab.classList.remove("text-slate-500");
+            profileTab.classList.add("text-slate-500");
+            profileTab.classList.remove("text-indigo-600");
+
+            moveGlider(securityTab);
+          });
+        }
+
+        // --- Profile Form Logic ---
+        const profileForm = document.getElementById("profile-form");
+        const cancelProfileButton = document.getElementById("cancel-profile-button");
+
+        if (profileForm) {
+          profileForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            showNotification("Berhasil!", "Perubahan profil telah disimpan.");
+            setTimeout(() => {
+              window.location.href = returnPage;
+            }, 1000);
+          });
+        }
+        if (cancelProfileButton) {
+          cancelProfileButton.addEventListener("click", () => {
+            window.location.href = returnPage;
+          });
+        }
+
+        // --- Security Form Logic ---
+        const securityForm = document.getElementById("security-form");
+        const newPasswordInput = document.getElementById("new-password");
+        const confirmPasswordInput = document.getElementById("confirm-password");
+        const passwordMatchMessage = document.getElementById("password-match-message");
+        const savePasswordButton = document.getElementById("save-password-button");
+        const cancelSecurityButton = document.getElementById("cancel-security-button");
+
+        if (securityForm) {
+          const checkPasswordFields = () => {
+            const allFields = securityForm.querySelectorAll(".password-field");
+            let allFilled = true;
+            allFields.forEach((field) => {
+              if (field.value.trim() === "") {
+                allFilled = false;
+              }
+            });
+
+            if (allFilled && newPasswordInput.value === confirmPasswordInput.value) {
+              savePasswordButton.classList.remove("hidden");
+            } else {
+              savePasswordButton.classList.add("hidden");
+            }
+          };
+
+          const checkPasswordMatch = () => {
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (confirmPassword.length > 0 && newPassword === confirmPassword) {
+              passwordMatchMessage.classList.remove("hidden");
+            } else {
+              passwordMatchMessage.classList.add("hidden");
+            }
+          };
+
+          securityForm.querySelectorAll(".password-field").forEach((field) => {
+            field.addEventListener("input", () => {
+              checkPasswordFields();
+              checkPasswordMatch();
+            });
+          });
+
+          securityForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            showNotification("Berhasil!", "Kata sandi Anda telah berhasil diubah.");
+            securityForm.reset();
+            checkPasswordFields();
+            checkPasswordMatch();
+            setTimeout(() => {
+              profileTab.click();
+            }, 500);
+          });
+
+          if (cancelSecurityButton) {
+            cancelSecurityButton.addEventListener("click", () => {
+              profileTab.click();
+            });
+          }
+        }
+
+        // --- Toggle Password Visibility ---
+        const togglePasswordIcons = document.querySelectorAll(".toggle-password");
+        togglePasswordIcons.forEach((icon) => {
+          icon.addEventListener("click", function () {
+            const input = this.parentElement.querySelector("input");
+            const eyeOpen = this.querySelector(".eye-open");
+            const eyeClosed = this.querySelector(".eye-closed");
+
+            if (input.type === "password") {
+              input.type = "text";
+              eyeOpen.classList.add("hidden");
+              eyeClosed.classList.remove("hidden");
+            } else {
+              input.type = "password";
+              eyeOpen.classList.remove("hidden");
+              eyeClosed.classList.add("hidden");
+            }
+          });
+        });
+
+        // --- Edit Profile Link on Same Page Logic ---
+        const editProfileLink = document.getElementById("edit-profile-link");
+        if (editProfileLink) {
+          editProfileLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            showNotification("Informasi", "Anda sudah berada di halaman Edit Profil.");
+            closeAllDropdowns();
+          });
+        }
+
+        // --- Logout Logic ---
+        const logoutButton = document.getElementById("logout-button");
+        if (logoutButton) {
+          logoutButton.addEventListener("click", (e) => {
+            e.preventDefault(); // Mencegah link default berjalan
+
+            // Di aplikasi nyata, Anda mungkin akan menghapus token sesi di sini
+            console.log("Logging out...");
+
+            // Arahkan pengguna kembali ke halaman login
+            window.location.href = "../authentication.html?status=logout_success";
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

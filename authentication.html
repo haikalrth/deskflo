@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeskFlo - Autentikasi</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Container utama yang membungkus semuanya */
+      .auth-container {
+        position: relative;
+        width: 100%;
+        max-width: 1000px; /* Lebar gabungan form dan panel branding */
+        height: 650px; /* Tinggi tetap untuk konsistensi */
+        overflow: hidden; /* Menyembunyikan apa pun yang keluar dari container */
+      }
+      /* Panel Branding yang akan bergerak */
+      .branding-panel {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 50%;
+        transition: transform 0.6s ease-in-out;
+        z-index: 20; /* Pastikan panel ini di atas form */
+      }
+      /* Form container */
+      .forms-wrapper {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        display: flex;
+      }
+      .form-section {
+        width: 50%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* Posisi awal panel branding di kiri (menutupi form registrasi) */
+      .auth-container .branding-panel {
+        transform: translateX(0%);
+      }
+      /* Saat mode registrasi aktif, geser panel branding ke kanan (menutupi form login) */
+      .auth-container.register-active .branding-panel {
+        transform: translateX(100%);
+      }
+      .form-view {
+        transition: opacity 0.3s ease-in-out;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen p-6">
+    <div id="auth-container" class="auth-container bg-white shadow-2xl rounded-2xl">
+      <!-- Wrapper untuk kedua form -->
+      <div class="forms-wrapper">
+        <!-- [KIRI] Bagian Form Pengajuan -->
+        <div class="form-section">
+          <div class="p-8 md:p-14 w-full max-w-md">
+            <h2 class="font-bold text-3xl text-gray-800">Pengajuan Akun</h2>
+            <p class="mt-2 text-gray-600">Data Anda akan ditinjau.</p>
+            <form id="registration-form" class="mt-8 space-y-6">
+              <div class="flex flex-col md:flex-row md:space-x-4 space-y-6 md:space-y-0">
+                <div class="w-full">
+                  <label for="fullname" class="block text-sm font-medium text-gray-700">Nama Lengkap</label
+                  ><input type="text" id="fullname" name="fullname" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                </div>
+                <div class="w-full">
+                  <label for="npm" class="block text-sm font-medium text-gray-700">NPM</label
+                  ><input type="text" id="npm" name="npm" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+                </div>
+              </div>
+              <div>
+                <label for="major" class="block text-sm font-medium text-gray-700">Jurusan</label
+                ><input type="text" id="major" name="major" class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required />
+              </div>
+              <div>
+                <label for="register-email" class="block text-sm font-medium text-gray-700">Alamat Email</label
+                ><input
+                  type="email"
+                  id="register-email"
+                  name="register-email"
+                  class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  required
+                />
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300"
+                >
+                  Kirim Pengajuan
+                </button>
+              </div>
+            </form>
+            <div class="mt-6 text-center text-sm">
+              <p class="text-gray-600">Sudah punya akun? <a href="#" id="trigger-login" class="font-medium text-indigo-600 hover:text-indigo-500">Login di sini</a></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- [KANAN] Bagian Form Login & Lupa Kata Sandi -->
+        <div class="form-section p-8 md:p-14 w-full max-w-md">
+          <!-- Tampilan Login -->
+          <div id="login-view" class="form-view w-full">
+            <h2 class="font-bold text-3xl text-gray-800">Login</h2>
+            <p class="mt-2 text-gray-600">Selamat datang kembali!</p>
+            <form id="login-form" class="mt-8 space-y-6">
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Alamat Email</label
+                ><input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="contoh: admin@example.com"
+                  class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  required
+                />
+              </div>
+              <div class="relative">
+                <label for="password" class="block text-sm font-medium text-gray-700">Kata Sandi</label
+                ><input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                /><span id="togglePassword" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" style="top: 28px"
+                  ><svg id="eye-open" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" /></svg
+                  ><svg id="eye-closed" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 hidden" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    <path d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.955 9.955 0 00-4.512 1.074L3.707 2.293z" /></svg
+                ></span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" /><label for="remember-me" class="ml-2 block text-sm text-gray-900"
+                    >Ingat saya</label
+                  >
+                </div>
+                <div class="text-sm"><a href="#" id="forgot-password-link" class="font-medium text-indigo-600 hover:text-indigo-500">Lupa kata sandi?</a></div>
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300"
+                >
+                  Login
+                </button>
+              </div>
+            </form>
+            <div class="mt-6 text-center text-sm">
+              <p class="text-gray-600">Belum punya akun? <a href="#" id="trigger-register" class="font-medium text-indigo-600 hover:text-indigo-500">Ajukan permohonan di sini</a></p>
+            </div>
+          </div>
+          <!-- Tampilan Lupa Kata Sandi -->
+          <div id="forgot-password-view" class="form-view w-full hidden opacity-0">
+            <h2 class="font-bold text-3xl text-gray-800">Lupa Kata Sandi?</h2>
+            <p class="mt-2 text-gray-600">Masukkan email Anda, kami akan mengirimkan instruksi untuk reset kata sandi.</p>
+            <form id="forgot-password-form" class="mt-8 space-y-6">
+              <div>
+                <label for="forgot-email" class="block text-sm font-medium text-gray-700">Alamat Email</label
+                ><input
+                  type="email"
+                  id="forgot-email"
+                  name="forgot-email"
+                  placeholder="anda@contoh.com"
+                  class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  required
+                />
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300"
+                >
+                  Kirim Instruksi
+                </button>
+              </div>
+            </form>
+            <div class="mt-6 text-center text-sm">
+              <p class="text-gray-600"><a href="#" id="back-to-login-link" class="font-medium text-indigo-600 hover:text-indigo-500">← Kembali ke Login</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel Branding (Overlay yang Bergerak) -->
+      <div class="branding-panel rounded-2xl">
+        <div class="p-8 md:p-14 h-full flex flex-col justify-between bg-gradient-to-br from-purple-600 via-indigo-600 to-indigo-800 rounded-2xl text-white">
+          <div class="flex items-center space-x-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span class="text-xl font-bold">DeskFlo</span>
+          </div>
+          <div class="my-10">
+            <!-- Konten akan berubah tergantung state -->
+            <div id="branding-content">
+              <!-- State Login (Default) -->
+              <div id="login-branding">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight">Kelola Jadwal dan Tugas Tim Anda.</h1>
+                <p class="mt-4 text-indigo-200">Platform terpusat untuk penjadwalan, manajemen tugas, dan monitoring programmer.</p>
+              </div>
+              <!-- State Register (Hidden by default) -->
+              <div id="register-branding" class="hidden">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight">Satu Langkah Lagi Menuju Kolaborasi.</h1>
+                <p class="mt-4 text-indigo-200">Isi data Anda dan tunggu persetujuan dari administrator untuk bergabung dengan tim.</p>
+              </div>
+            </div>
+          </div>
+          <div class="w-full">
+            <svg viewBox="0 0 350 200" xmlns="http://www.w3.org/2000/svg">
+              <g opacity="0.8">
+                <rect x="50" y="50" width="250" height="130" rx="15" fill="#ffffff" fill-opacity="0.1" />
+                <rect x="65" y="70" width="80" height="10" rx="5" fill="#ffffff" fill-opacity="0.5" />
+                <rect x="65" y="90" width="150" height="8" rx="4" fill="#ffffff" fill-opacity="0.3" />
+                <rect x="65" y="110" width="120" height="8" rx="4" fill="#ffffff" fill-opacity="0.3" />
+                <circle cx="270" cy="80" r="15" fill="#ec4899" />
+                <circle cx="250" cy="80" r="15" fill="#8b5cf6" />
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { showNotification } from "./notifications.js";
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // Logika untuk menampilkan/menyembunyikan kata sandi
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.getElementById("password");
+        const eyeOpen = document.getElementById("eye-open");
+        const eyeClosed = document.getElementById("eye-closed");
+
+        if (togglePassword) {
+          togglePassword.addEventListener("click", function () {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            eyeOpen.classList.toggle("hidden");
+            eyeClosed.classList.toggle("hidden");
+          });
+        }
+
+        // Logika untuk transisi geser panel branding
+        const authContainer = document.getElementById("auth-container");
+        const triggerRegisterLink = document.getElementById("trigger-register");
+        const triggerLoginLink = document.getElementById("trigger-login");
+        const loginBranding = document.getElementById("login-branding");
+        const registerBranding = document.getElementById("register-branding");
+
+        if (triggerRegisterLink) {
+          triggerRegisterLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            authContainer.classList.add("register-active");
+            setTimeout(() => {
+              loginBranding.classList.add("hidden");
+              registerBranding.classList.remove("hidden");
+            }, 250);
+          });
+        }
+
+        if (triggerLoginLink) {
+          triggerLoginLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            authContainer.classList.remove("register-active");
+            setTimeout(() => {
+              loginBranding.classList.remove("hidden");
+              registerBranding.classList.add("hidden");
+            }, 250);
+          });
+        }
+
+        // --- Logika untuk Menampilkan Notifikasi Logout ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get("status");
+
+        if (status === "logout_success") {
+          showNotification("Anda telah berhasil keluar dari akun Anda.", "success");
+        }
+
+        // Logika untuk mengarahkan ke dashboard setelah login
+        const loginForm = document.getElementById("login-form");
+        const emailInput = document.getElementById("email");
+        if (loginForm && emailInput) {
+          loginForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const email = emailInput.value.toLowerCase();
+            let destination = "";
+
+            if (email.includes("admin")) {
+              destination = "admin/dashboard-admin.html";
+            } else if (email.includes("manager")) {
+              destination = "manager/dashboard-manager.html";
+            } else {
+              destination = "programmer/dashboard-programmer.html";
+            }
+
+            showNotification("Login berhasil! Mengarahkan ke dashboard...", "success");
+
+            setTimeout(() => {
+              window.location.href = destination;
+            }, 1500);
+          });
+        }
+
+        // Logika untuk notifikasi setelah pengajuan akun
+        const registrationForm = document.getElementById("registration-form");
+        if (registrationForm) {
+          registrationForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            showNotification("Pengajuan Terkirim! Silakan cek email Anda secara berkala.", "success");
+            setTimeout(() => {
+              if (triggerLoginLink) triggerLoginLink.click();
+            }, 500);
+            registrationForm.reset();
+          });
+        }
+
+        // Logika untuk Lupa Kata Sandi
+        const forgotPasswordLink = document.getElementById("forgot-password-link");
+        const backToLoginLink = document.getElementById("back-to-login-link");
+        const loginView = document.getElementById("login-view");
+        const forgotPasswordView = document.getElementById("forgot-password-view");
+        const forgotPasswordForm = document.getElementById("forgot-password-form");
+
+        const switchToForgotPassword = () => {
+          loginView.classList.add("opacity-0");
+          setTimeout(() => {
+            loginView.classList.add("hidden");
+            forgotPasswordView.classList.remove("hidden");
+            setTimeout(() => forgotPasswordView.classList.remove("opacity-0"), 10);
+          }, 300);
+        };
+
+        const switchToLogin = () => {
+          forgotPasswordView.classList.add("opacity-0");
+          setTimeout(() => {
+            forgotPasswordView.classList.add("hidden");
+            loginView.classList.remove("hidden");
+            setTimeout(() => loginView.classList.remove("opacity-0"), 10);
+          }, 300);
+        };
+
+        if (forgotPasswordLink) {
+          forgotPasswordLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            switchToForgotPassword();
+          });
+        }
+
+        if (backToLoginLink) {
+          backToLoginLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            switchToLogin();
+          });
+        }
+
+        if (forgotPasswordForm) {
+          forgotPasswordForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            showNotification("Instruksi terkirim! Silakan periksa email Anda.", "success");
+            switchToLogin();
+            forgotPasswordForm.reset();
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

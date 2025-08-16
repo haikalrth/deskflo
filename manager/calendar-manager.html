@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalender Tim - DeskFlo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8fafc; /* bg-slate-50 */
+      }
+      .modal-backdrop {
+        transition: opacity 0.3s ease;
+      }
+      .modal-content {
+        transition: transform 0.3s ease;
+      }
+      .dropdown-menu {
+        transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+      }
+      /* Custom FullCalendar Styles */
+      .fc .fc-toolbar-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+      .fc .fc-daygrid-day.fc-day-today {
+        background-color: #eef2ff;
+      }
+      .fc-event {
+        border: none !important;
+        padding: 4px 8px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body class="text-slate-800">
+    <div class="flex h-screen bg-slate-50">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-white shadow-sm flex-shrink-0">
+        <div class="p-6 flex items-center space-x-3">
+          <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <span class="text-xl font-bold text-slate-800">DeskFlo</span>
+        </div>
+        <nav class="mt-6 px-4">
+          <a href="dashboard-manager.html" class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+            </svg>
+            Dashboard
+          </a>
+          <a href="programmer-manager.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0112 8a5 5 0 014.5 4.33A6.97 6.97 0 0017 16c0 .34.024.673.07 1h-4.14zM6.07 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 016 8a5 5 0 014.5 4.33A6.97 6.97 0 0011 16c0 .34.024.673.07 1H6.07z"
+              />
+            </svg>
+            Programmer
+          </a>
+          <a href="team-management-manager.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v-1h8v1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 15v-1a4 4 0 00-4-4H8a4 4 0 00-4 4v1h12z" />
+            </svg>
+            Team Management
+          </a>
+          <a href="jobs-manager.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm0 4a1 1 0 000 2h6a1 1 0 100-2H7zm0 4a1 1 0 000 2h3a1 1 0 100-2H7z" clip-rule="evenodd" />
+            </svg>
+            Jobs
+          </a>
+          <a href="calendar-manager.html" class="flex items-center px-4 py-3 mt-2 bg-slate-100 text-indigo-600 font-semibold rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V4a1 1 0 10-2 0v1H7V4a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+            </svg>
+            Calendar
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col h-screen overflow-y-hidden">
+        <header class="sticky top-0 z-10 bg-white/80 backdrop-blur-sm border-b border-slate-200 p-6 flex justify-between items-center">
+          <h1 class="text-xl font-semibold text-slate-900">Kalender Tim Anda</h1>
+          <div class="flex items-center space-x-5">
+            <div class="relative">
+              <button id="notification-button" class="text-slate-500 hover:text-slate-800 relative">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
+                </svg>
+                <span class="absolute -top-1 -right-1 flex h-3 w-3"
+                  ><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span
+                ></span>
+              </button>
+              <div id="notification-dropdown" class="dropdown-menu absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
+                <div class="px-4 py-2 font-semibold text-slate-800 border-b">Notifikasi</div>
+                <a href="#" class="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-100"
+                  ><p class="font-medium">Budi Santoso mengajukan review</p>
+                  <p class="text-xs text-slate-500">Tugas: Fixing Bug on Login Page</p></a
+                >
+              </div>
+            </div>
+            <div class="relative">
+              <div id="profile-button" class="flex items-center space-x-3 cursor-pointer">
+                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/34d399/ffffff?text=S" alt="Manager Avatar" />
+                <div>
+                  <p class="font-semibold text-sm">Siti Aminah</p>
+                  <p class="text-xs text-slate-500">Manager</p>
+                </div>
+              </div>
+              <div id="profile-dropdown" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
+                <a href="edit-profile-manager.html?from=calendar-manager.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Edit Profil</a>
+                <a href="#" id="logout-button" class="block px-4 py-2 text-sm text-rose-600 hover:bg-rose-50">Log Out</a>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div class="flex-1 overflow-y-auto">
+          <div class="p-8">
+            <div class="bg-white rounded-xl shadow-sm p-6"><div id="calendar"></div></div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div id="task-detail-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden modal-backdrop opacity-0">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg transform scale-95 modal-content">
+        <div class="flex justify-between items-center p-6 border-b">
+          <h3 id="modal-task-title" class="text-xl font-bold">Detail Tugas</h3>
+          <button class="close-modal-button text-slate-500 hover:text-slate-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <div class="p-6 space-y-4">
+          <div>
+            <p class="text-sm text-slate-500">Penanggung Jawab</p>
+            <p id="modal-assignee" class="font-semibold"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700">Deskripsi</label>
+            <p id="modal-description" class="mt-1 text-sm text-slate-600 bg-slate-50 p-3 rounded-md border"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // --- Dropdown Logic ---
+        const profileButton = document.getElementById("profile-button");
+        const profileDropdown = document.getElementById("profile-dropdown");
+        const notificationButton = document.getElementById("notification-button");
+        const notificationDropdown = document.getElementById("notification-dropdown");
+
+        function closeDropdown(dropdown) {
+          if (dropdown && !dropdown.classList.contains("hidden")) {
+            dropdown.classList.add("opacity-0", "scale-95");
+            setTimeout(() => dropdown.classList.add("hidden"), 200);
+          }
+        }
+
+        function toggleDropdown(dropdownToToggle) {
+          const isHidden = dropdownToToggle.classList.contains("hidden");
+          const currentlyOpenDropdown = profileDropdown === dropdownToToggle ? notificationDropdown : profileDropdown;
+          closeDropdown(currentlyOpenDropdown);
+          if (isHidden) {
+            dropdownToToggle.classList.remove("hidden");
+            setTimeout(() => {
+              dropdownToToggle.classList.remove("opacity-0", "scale-95");
+            }, 10);
+          } else {
+            closeDropdown(dropdownToToggle);
+          }
+        }
+
+        if (profileButton) {
+          profileButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleDropdown(profileDropdown);
+          });
+        }
+        if (notificationButton) {
+          notificationButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleDropdown(notificationDropdown);
+          });
+        }
+        window.addEventListener("click", () => {
+          closeAllDropdowns();
+        });
+
+        function closeAllDropdowns() {
+          closeDropdown(profileDropdown);
+          closeDropdown(notificationDropdown);
+        }
+
+        // --- Logout Logic ---
+        const logoutButton = document.getElementById("logout-button");
+        if (logoutButton) {
+          logoutButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            console.log("Logging out...");
+            window.location.href = "../authentication.html?status=logout_success";
+          });
+        }
+
+        // --- Calendar Logic ---
+        const calendarEl = document.getElementById("calendar");
+        const taskDetailModal = document.getElementById("task-detail-modal");
+        const closeModalButtons = document.querySelectorAll(".close-modal-button");
+
+        if (!calendarEl) return;
+
+        // Asumsi Manager Siti Aminah mengelola tim 'frontend'
+        const managerTeam = "frontend";
+
+        const allEvents = [
+          {
+            id: "1",
+            title: "Deadline: Refactor Kode Controller",
+            start: "2025-08-15",
+            backgroundColor: "#ef4444",
+            extendedProps: { team: "api", programmer: "Budi S.", description: "Melakukan refactoring pada UserController.js untuk meningkatkan keterbacaan dan performa." },
+          },
+          {
+            id: "2",
+            title: "Selesai: Fixing Bug",
+            start: "2025-08-08",
+            backgroundColor: "#10b981",
+            display: "list-item",
+            extendedProps: { team: "api", programmer: "Budi S.", description: "Memperbaiki bug validasi email yang tidak berfungsi pada browser Safari." },
+          },
+          {
+            id: "3",
+            title: "Deadline: UI Slicing Checkout",
+            start: "2025-08-25",
+            backgroundColor: "#ef4444",
+            extendedProps: { team: "frontend", programmer: "Citra L.", description: "Membuat komponen UI untuk halaman checkout sesuai dengan desain Figma." },
+          },
+          {
+            id: "4",
+            title: "Deadline: Integrasi API Payment",
+            start: "2025-08-28",
+            backgroundColor: "#ef4444",
+            extendedProps: { team: "api", programmer: "Doni F.", description: "Menghubungkan frontend dengan API payment gateway Xendit." },
+          },
+        ];
+
+        // Filter events for the manager's team
+        const teamEvents = allEvents.filter((event) => event.extendedProps.team === managerTeam);
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
+          headerToolbar: { left: "prev,next today", center: "title", right: "dayGridMonth,timeGridWeek,listWeek" },
+          locale: "id",
+          events: teamEvents, // Load only the manager's team events
+          eventContent: function (arg) {
+            let newTitle = document.createElement("div");
+            newTitle.innerHTML = `<div class="font-semibold">${arg.event.title}</div><div class="text-xs opacity-80">${arg.event.extendedProps.programmer}</div>`;
+            return { domNodes: [newTitle] };
+          },
+          eventClick: function (info) {
+            const task = info.event;
+            document.getElementById("modal-task-title").textContent = task.title;
+            document.getElementById("modal-assignee").textContent = task.extendedProps.programmer;
+            document.getElementById("modal-description").textContent = task.extendedProps.description;
+            openModal(taskDetailModal);
+          },
+        });
+        calendar.render();
+
+        const openModal = (modal) => {
+          modal.classList.remove("hidden");
+          setTimeout(() => {
+            modal.classList.remove("opacity-0");
+            modal.querySelector(".modal-content").classList.remove("scale-95");
+          }, 10);
+        };
+
+        const closeModal = (modal) => {
+          if (modal) {
+            modal.classList.add("opacity-0");
+            modal.querySelector(".modal-content").classList.add("scale-95");
+            setTimeout(() => modal.classList.add("hidden"), 300);
+          }
+        };
+
+        closeModalButtons.forEach((button) => {
+          button.addEventListener("click", (e) => {
+            const modalToClose = e.target.closest(".modal-backdrop");
+            if (modalToClose) closeModal(modalToClose);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
