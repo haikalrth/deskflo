@@ -1,0 +1,16 @@
+tasks:
+  - name: Backend-Service
+    # Pindah ke direktori backend sebelum menjalankan perintah
+    init: |
+      cd deskflo-backend
+      go get ./...
+    command: |
+      cd deskflo-backend
+      docker build -t deskflo-backend-app .
+      docker run -p 8080:8080 --env-file .env deskflo-backend-app
+
+ports:
+  - port: 8080
+    onOpen: open-preview
+    name: Backend API
+    description: Port for the DeskFlo Go backend service
