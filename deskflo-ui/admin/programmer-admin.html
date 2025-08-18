@@ -64,7 +64,7 @@
               </svg>
               Account Approval
             </div>
-            <span class="w-5 h-5 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center">2</span>
+            <span id="approval-count" class="w-5 h-5 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center">...</span>
           </a>
           <a href="jobs-admin.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
@@ -124,31 +124,17 @@
         </header>
         <div class="p-8">
           <div class="flex justify-end mb-6">
-            <div class="flex items-center space-x-4">
-              <button id="export-button" class="bg-white text-slate-700 border border-slate-300 font-semibold px-4 py-2 rounded-lg hover:bg-slate-50 flex items-center space-x-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fill-rule="evenodd"
-                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
-                    clip-rule="evenodd"
-                  /></svg
-                ><span>Export to CSV</span>
-              </button>
-              <button id="add-programmer-button" class="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center space-x-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg
-                ><span>Tambah Programmer</span>
-              </button>
-            </div>
+            <button id="add-programmer-button" class="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg
+              ><span>Tambah Programmer</span>
+            </button>
           </div>
           <div class="bg-white p-4 rounded-xl shadow-sm mb-6">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <input id="search-input" type="text" placeholder="Cari nama atau NPM..." class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
               <select id="team-filter" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="">Semua Tim</option>
-                <option>Tim Frontend</option>
-                <option>Tim API</option>
-                <option>Tim QA</option>
               </select>
               <select id="status-filter" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="">Semua Status</option>
@@ -169,7 +155,9 @@
               <div class="col-span-1">Tugas Aktif</div>
               <div class="col-span-1 text-center">Aksi</div>
             </div>
-            <div id="programmer-table-body" class="mt-2 space-y-2"></div>
+            <div id="programmer-table-body" class="mt-2 space-y-2">
+              <!-- Data akan diisi oleh JavaScript -->
+            </div>
           </div>
         </div>
       </main>
@@ -184,137 +172,205 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
-        <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-          <div>
-            <label for="nama" class="block text-sm font-medium text-slate-700">Nama Lengkap</label
-            ><input type="text" id="nama" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-          </div>
-          <div>
-            <label for="npm" class="block text-sm font-medium text-slate-700">NPM</label
-            ><input type="text" id="npm" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-          </div>
-          <div>
-            <label for="jurusan" class="block text-sm font-medium text-slate-700">Jurusan</label
-            ><input type="text" id="jurusan" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-          </div>
-          <div>
-            <label for="email" class="block text-sm font-medium text-slate-700">Alamat Email</label
-            ><input type="email" id="email" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-slate-700">Pilih Tim</label>
-            <div id="team-checkboxes" class="mt-2 space-y-2 border rounded-lg p-3">
-              <div class="flex items-center">
-                <input id="team-fe" name="team" value="Tim Frontend" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" /><label for="team-fe" class="ml-3 text-sm text-slate-600"
-                  >Tim Frontend</label
-                >
-              </div>
-              <div class="flex items-center">
-                <input id="team-api" name="team" value="Tim API" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" /><label for="team-api" class="ml-3 text-sm text-slate-600">Tim API</label>
-              </div>
-              <div class="flex items-center">
-                <input id="team-qa" name="team" value="Tim QA" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" /><label for="team-qa" class="ml-3 text-sm text-slate-600">Tim QA</label>
-              </div>
+        <form id="programmer-form">
+          <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+            <input type="hidden" id="programmer-id" />
+            <div>
+              <label for="nama" class="block text-sm font-medium text-slate-700">Nama Lengkap</label
+              ><input
+                type="text"
+                id="nama"
+                name="nama_lengkap"
+                required
+                class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label for="npm" class="block text-sm font-medium text-slate-700">NPM</label
+              ><input type="text" id="npm" name="npm" required class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            </div>
+            <div>
+              <label for="jurusan" class="block text-sm font-medium text-slate-700">Jurusan</label
+              ><input type="text" id="jurusan" name="jurusan" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium text-slate-700">Alamat Email</label
+              ><input type="email" id="email" name="email" required class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            </div>
+            <div>
+              <label for="role" class="block text-sm font-medium text-slate-700">Peran (Role)</label>
+              <select id="role" name="role" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option>Programmer</option>
+                <option>Admin</option>
+              </select>
             </div>
           </div>
-          <div>
-            <label for="role" class="block text-sm font-medium text-slate-700">Peran (Role)</label>
-            <select id="role" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-              <option>Programmer</option>
-              <option>Manager</option>
-              <option>Admin</option>
-            </select>
+          <div class="p-6 bg-slate-50 rounded-b-2xl flex justify-end space-x-3">
+            <button type="button" class="close-modal-button bg-white text-slate-700 px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100">Batal</button>
+            <button id="modal-submit-button" type="submit" class="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700">Kirim Undangan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden modal-backdrop opacity-0">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-md transform scale-95 modal-content">
+        <div class="p-6">
+          <div class="text-center">
+            <svg class="mx-auto h-12 w-12 text-rose-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+              />
+            </svg>
+            <h3 class="mt-2 text-lg font-semibold text-slate-800">Hapus Programmer</h3>
+            <p id="delete-confirmation-text" class="mt-2 text-sm text-slate-500">Tindakan ini tidak dapat dibatalkan. Mohon ketik nama programmer untuk konfirmasi.</p>
+          </div>
+          <div class="mt-4">
+            <input type="text" id="delete-confirmation-input" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-rose-500 focus:border-rose-500 sm:text-sm" />
           </div>
         </div>
-        <div class="p-6 bg-slate-50 rounded-b-2xl flex justify-end space-x-3">
-          <button class="close-modal-button bg-white text-slate-700 px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100">Batal</button>
-          <button id="modal-submit-button" class="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700">Kirim Undangan</button>
+        <div class="p-6 bg-slate-50 rounded-b-2xl flex justify-center space-x-3">
+          <button class="close-delete-modal-button bg-white text-slate-700 px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-100">Batal</button>
+          <button id="confirm-delete-button" class="bg-rose-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-rose-700 disabled:bg-rose-300 disabled:cursor-not-allowed" disabled>Ya, Hapus</button>
         </div>
       </div>
     </div>
 
-    <!-- All Tasks Modal -->
-    <div id="all-tasks-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden modal-backdrop opacity-0">
-      <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg transform scale-95 modal-content">
-        <div class="flex justify-between items-center p-6 border-b">
-          <h3 id="modal-programmer-name" class="text-xl font-bold">Daftar Tugas</h3>
-          <button class="close-modal-button text-slate-500 hover:text-slate-800">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
-        </div>
-        <div id="modal-task-list" class="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
-          <!-- Task list will be injected here -->
-        </div>
-      </div>
-    </div>
+    <script type="module">
+      import { showNotification } from "../notifications.js";
 
-    <script>
-      // --- Mock Data ---
-      const programmers = [
-        { id: 1, name: "Budi Santoso", npm: "1234567890", major: "Teknik Informatika", email: "budi@example.com", teams: ["Tim API"], role: "Programmer", status: "On Task", activeTaskIds: [4, 8] },
-        { id: 2, name: "Citra Lestari", npm: "1234567891", major: "Sistem Informasi", email: "citra@example.com", teams: ["Tim Frontend"], role: "Programmer", status: "Standby", activeTaskIds: [] },
-        { id: 3, name: "Doni Firmansyah", npm: "1234567892", major: "Teknik Komputer", email: "doni@example.com", teams: ["Tim Frontend", "Tim API"], role: "Programmer", status: "On Task", activeTaskIds: [2] },
-        { id: 4, name: "Eka Putri", npm: "1234567893", major: "Teknik Informatika", email: "eka@example.com", teams: ["Tim QA"], role: "Programmer", status: "On Leave", activeTaskIds: [] },
-      ];
+      // --- KONFIGURASI SUPABASE ---
+      const SUPABASE_URL = "https://dnyjsrlrfuhmnzuhzrux.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRueWpzcmxyZnVobW56dWh6cnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDk0MjcsImV4cCI6MjA3MDIyNTQyN30.sK3BqfLMS36-N5lNuED3ehYZ6QbDgkdTpTngKPv20x8";
+      let allProgrammers = [];
+      let allTeams = [];
+      let currentProgrammerIdToDelete = null;
 
-      const mockTasks = {
-        2: { title: "UI Slicing Halaman Checkout", project: "Fitur Pembayaran V2" },
-        4: { title: "Fixing Bug on Login Page", project: "Tugas Individual" },
-        8: { title: "Refactor Kode Controller", project: "Tugas Individual" },
-      };
+      // --- FUNGSI FETCH DATA ---
+      async function fetchInitialData() {
+        const tableBody = document.getElementById("programmer-table-body");
+        tableBody.innerHTML = '<div class="text-center p-8 text-slate-500 col-span-full">Memuat data...</div>';
+        try {
+          // Ambil data programmer dan tim secara bersamaan
+          const [programmersResponse, teamsResponse] = await Promise.all([
+            fetch(`${SUPABASE_URL}/functions/v1/get-programmers`, { headers: { Authorization: `Bearer ${SUPABASE_ANON_KEY}`, apikey: SUPABASE_ANON_KEY } }),
+            fetch(`${SUPABASE_URL}/functions/v1/get-teams`, { headers: { Authorization: `Bearer ${SUPABASE_ANON_KEY}`, apikey: SUPABASE_ANON_KEY } }),
+          ]);
 
-      // --- Table Rendering ---
-      const tableBody = document.getElementById("programmer-table-body");
+          if (!programmersResponse.ok) throw new Error("Gagal mengambil data programmer");
+          if (!teamsResponse.ok) throw new Error("Gagal mengambil data tim");
 
-      function renderProgrammerTable(dataToRender = programmers) {
+          allProgrammers = await programmersResponse.json();
+          allTeams = await teamsResponse.json();
+
+          // Setelah semua data ada, render tabel dan filter
+          populateTeamFilter();
+          renderProgrammerTable(allProgrammers);
+        } catch (error) {
+          console.error("Error fetching initial data:", error);
+          tableBody.innerHTML = `<div class="text-center p-8 text-red-500 col-span-full">Gagal memuat data: ${error.message}</div>`;
+        }
+      }
+
+      // --- FUNGSI UNTUK MENGISI FILTER TIM ---
+      function populateTeamFilter() {
+        const teamFilter = document.getElementById("team-filter");
+        // Kosongkan opsi yang ada kecuali yang pertama ("Semua Tim")
+        teamFilter.innerHTML = '<option value="">Semua Tim</option>';
+        allTeams.forEach((team) => {
+          const option = document.createElement("option");
+          option.value = team.id;
+          option.textContent = team.nama_tim;
+          teamFilter.appendChild(option);
+        });
+      }
+
+      // --- FUNGSI UNTUK MERENDER TABEL ---
+      function renderProgrammerTable(dataToRender) {
+        const tableBody = document.getElementById("programmer-table-body");
         tableBody.innerHTML = "";
+        if (dataToRender.length === 0) {
+          tableBody.innerHTML = '<div class="text-center p-8 text-slate-500 col-span-full">Tidak ada data programmer yang ditemukan.</div>';
+          return;
+        }
         dataToRender.forEach((p) => {
           const row = document.createElement("div");
           row.className = "grid grid-cols-7 gap-4 items-center bg-white p-4 rounded-lg shadow-sm border border-slate-200";
 
-          const teamTags = p.teams
-            .map((team) => {
-              let colorClass = "bg-gray-100 text-gray-800";
-              if (team === "Tim API") colorClass = "bg-rose-100 text-rose-800";
-              if (team === "Tim Frontend") colorClass = "bg-blue-100 text-blue-800";
-              if (team === "Tim QA") colorClass = "bg-green-100 text-green-800";
-              return `<span class="text-xs font-medium px-2 py-0.5 rounded-full ${colorClass}">${team}</span>`;
-            })
-            .join("");
+          // Cari tim untuk programmer saat ini
+          const programmerTeams = allTeams.filter((team) => team.members.some((member) => member.id === p.id));
+          const teamTags =
+            programmerTeams.length > 0
+              ? programmerTeams.map((team) => `<span class="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800">${team.nama_tim}</span>`).join(" ")
+              : '<span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-800">-</span>';
 
-          let statusHtml = "";
-          if (p.status === "On Task") statusHtml = `<span class="flex items-center text-emerald-600"><span class="h-2 w-2 rounded-full bg-emerald-500 mr-2"></span>On Task</span>`;
-          else if (p.status === "Standby") statusHtml = `<span class="flex items-center text-amber-600"><span class="h-2 w-2 rounded-full bg-amber-500 mr-2"></span>Standby</span>`;
-          else statusHtml = `<span class="flex items-center text-slate-500"><span class="h-2 w-2 rounded-full bg-slate-400 mr-2"></span>On Leave</span>`;
-
-          let taskHtml = '<span class="text-slate-400">-</span>';
-          if (p.activeTaskIds.length > 0) {
-            taskHtml = `<button class="font-medium text-indigo-600 hover:underline open-tasks-modal" data-programmer-id="${p.id}">${p.activeTaskIds.length} Tugas Aktif</button>`;
-          }
+          const statusHtml = `<span class="flex items-center text-slate-500"><span class="h-2 w-2 rounded-full bg-slate-400 mr-2"></span>Standby</span>`;
+          const taskHtml = '<span class="text-slate-400">-</span>';
 
           row.innerHTML = `
-                    <div class="col-span-1 font-semibold text-slate-900">${p.name}</div>
-                    <div class="col-span-1 text-slate-600">${p.npm}</div>
-                    <div class="col-span-1 text-slate-600">${p.major}</div>
-                    <div class="col-span-1 flex flex-wrap gap-1">${teamTags}</div>
-                    <div class="col-span-1">${statusHtml}</div>
-                    <div class="col-span-1">${taskHtml}</div>
-                    <div class="col-span-1 text-center space-x-3">
-                        <button class="font-medium text-slate-600 hover:underline edit-programmer-button" data-programmer-id="${p.id}">Edit</button>
-                    </div>
-                `;
+            <div class="col-span-1 font-semibold text-slate-900">${p.nama_lengkap}</div>
+            <div class="col-span-1 text-slate-600">${p.npm}</div>
+            <div class="col-span-1 text-slate-600">${p.jurusan}</div>
+            <div class="col-span-1 flex flex-wrap gap-1">${teamTags}</div>
+            <div class="col-span-1">${statusHtml}</div>
+            <div class="col-span-1">${taskHtml}</div>
+            <div class="col-span-1 text-center space-x-3">
+                <button class="font-medium text-slate-600 hover:underline edit-programmer-button" data-programmer-id="${p.id}">Edit</button>
+                <button class="font-medium text-rose-600 hover:underline delete-programmer-button" data-programmer-id="${p.id}">Hapus</button>
+            </div>
+          `;
           tableBody.appendChild(row);
         });
-
-        attachAllTasksModalListeners();
-        attachEditModalListeners();
+        attachActionListeners();
       }
 
-      // --- Modal Management ---
+      // --- LOGIKA FILTER ---
+      function applyFilters() {
+        const searchTerm = document.getElementById("search-input").value.toLowerCase();
+        const selectedTeamId = document.getElementById("team-filter").value;
+        // const selectedStatus = document.getElementById("status-filter").value; // Belum diimplementasikan
+
+        let filteredData = allProgrammers;
+
+        // Filter berdasarkan pencarian nama/npm
+        if (searchTerm) {
+          filteredData = filteredData.filter((p) => p.nama_lengkap.toLowerCase().includes(searchTerm) || p.npm.includes(searchTerm));
+        }
+
+        // Filter berdasarkan tim
+        if (selectedTeamId) {
+          filteredData = filteredData.filter((p) => {
+            // Cek apakah programmer ini ada di dalam tim yang dipilih
+            return allTeams.some((team) => team.id == selectedTeamId && team.members.some((member) => member.id === p.id));
+          });
+        }
+
+        renderProgrammerTable(filteredData);
+      }
+
+      document.getElementById("apply-filter-button").addEventListener("click", applyFilters);
+      document.getElementById("search-input").addEventListener("keyup", (event) => {
+        if (event.key === "Enter") applyFilters();
+      });
+
+      // --- LOGIKA MODAL ---
       const programmerModal = document.getElementById("programmer-modal");
-      const allTasksModal = document.getElementById("all-tasks-modal");
+      const deleteModal = document.getElementById("delete-modal");
       const addProgrammerButton = document.getElementById("add-programmer-button");
       const closeModalButtons = document.querySelectorAll(".close-modal-button");
+      const closeDeleteModalButton = document.querySelector(".close-delete-modal-button");
+      const programmerForm = document.getElementById("programmer-form");
+      const modalTitle = document.getElementById("modal-title");
+      const modalSubmitButton = document.getElementById("modal-submit-button");
+      const programmerIdInput = document.getElementById("programmer-id");
+      const emailInput = document.getElementById("email");
+      const confirmDeleteButton = document.getElementById("confirm-delete-button");
+      const deleteConfirmationText = document.getElementById("delete-confirmation-text");
+      const deleteConfirmationInput = document.getElementById("delete-confirmation-input");
 
       const openModal = (modal) => {
         modal.classList.remove("hidden");
@@ -325,229 +381,171 @@
       };
 
       const closeModal = (modal) => {
-        if (modal) {
-          modal.classList.add("opacity-0");
-          modal.querySelector(".modal-content").classList.add("scale-95");
-          setTimeout(() => modal.classList.add("hidden"), 300);
-        }
+        modal.classList.add("opacity-0");
+        modal.querySelector(".modal-content").classList.add("scale-95");
+        setTimeout(() => modal.classList.add("hidden"), 300);
       };
 
-      closeModalButtons.forEach((button) => {
-        button.addEventListener("click", (e) => {
-          const modalToClose = e.target.closest(".modal-backdrop");
-          if (modalToClose) closeModal(modalToClose);
-        });
-      });
-
-      // --- Add/Edit Programmer Modal Logic ---
-      const modalTitle = document.getElementById("modal-title");
-      const modalSubmitButton = document.getElementById("modal-submit-button");
-      const formNama = document.getElementById("nama");
-      const formNpm = document.getElementById("npm");
-      const formJurusan = document.getElementById("jurusan");
-      const formEmail = document.getElementById("email");
-      const formRole = document.getElementById("role");
-      const teamCheckboxes = document.querySelectorAll('input[name="team"]');
-
-      function resetForm() {
-        formNama.value = "";
-        formNpm.value = "";
-        formJurusan.value = "";
-        formEmail.value = "";
-        formRole.value = "Programmer";
-        teamCheckboxes.forEach((cb) => (cb.checked = false));
-      }
+      closeModalButtons.forEach((button) => button.addEventListener("click", () => closeModal(programmerModal)));
+      closeDeleteModalButton.addEventListener("click", () => closeModal(deleteModal));
 
       addProgrammerButton.addEventListener("click", () => {
-        resetForm();
+        programmerForm.reset();
+        programmerIdInput.value = "";
         modalTitle.textContent = "Tambah Programmer Baru";
         modalSubmitButton.textContent = "Kirim Undangan";
+        emailInput.disabled = false;
         openModal(programmerModal);
       });
 
-      function attachEditModalListeners() {
-        const editButtons = document.querySelectorAll(".edit-programmer-button");
-        editButtons.forEach((button) => {
+      function attachActionListeners() {
+        // Attach listeners for Edit buttons
+        document.querySelectorAll(".edit-programmer-button").forEach((button) => {
           button.addEventListener("click", () => {
-            const programmerId = button.getAttribute("data-programmer-id");
-            const programmer = programmers.find((p) => p.id == programmerId);
-
+            const programmerId = button.dataset.programmerId;
+            const programmer = allProgrammers.find((p) => p.id == programmerId);
             if (programmer) {
-              resetForm();
-              modalTitle.textContent = `Edit Data: ${programmer.name}`;
+              programmerForm.reset();
+              modalTitle.textContent = `Edit Data: ${programmer.nama_lengkap}`;
               modalSubmitButton.textContent = "Simpan Perubahan";
 
-              formNama.value = programmer.name;
-              formNpm.value = programmer.npm;
-              formJurusan.value = programmer.major;
-              formEmail.value = programmer.email;
-              formRole.value = programmer.role;
-
-              teamCheckboxes.forEach((cb) => {
-                if (programmer.teams.includes(cb.value)) {
-                  cb.checked = true;
-                }
-              });
+              programmerIdInput.value = programmer.id;
+              document.getElementById("nama").value = programmer.nama_lengkap;
+              document.getElementById("npm").value = programmer.npm;
+              document.getElementById("jurusan").value = programmer.jurusan;
+              emailInput.value = programmer.email;
+              emailInput.disabled = true;
+              document.getElementById("role").value = programmer.role;
 
               openModal(programmerModal);
             }
           });
         });
-      }
 
-      // --- All Tasks Modal Logic ---
-      const modalProgrammerName = document.getElementById("modal-programmer-name");
-      const modalTaskList = document.getElementById("modal-task-list");
-
-      function attachAllTasksModalListeners() {
-        const openTasksModalButtons = document.querySelectorAll(".open-tasks-modal");
-        openTasksModalButtons.forEach((button) => {
+        // Attach listeners for Delete buttons
+        document.querySelectorAll(".delete-programmer-button").forEach((button) => {
           button.addEventListener("click", () => {
-            const programmerId = button.getAttribute("data-programmer-id");
-            const programmer = programmers.find((p) => p.id == programmerId);
-
+            currentProgrammerIdToDelete = button.dataset.programmerId;
+            const programmer = allProgrammers.find((p) => p.id == currentProgrammerIdToDelete);
             if (programmer) {
-              modalProgrammerName.textContent = `Tugas Aktif: ${programmer.name}`;
-              modalTaskList.innerHTML = ""; // Clear previous list
-
-              if (programmer.activeTaskIds.length > 0) {
-                programmer.activeTaskIds.forEach((taskId) => {
-                  const task = mockTasks[taskId];
-                  if (task) {
-                    const taskEl = document.createElement("div");
-                    taskEl.className = "bg-slate-50 p-3 rounded-lg border";
-                    taskEl.innerHTML = `<p class="font-semibold text-slate-800">${task.title}</p><p class="text-xs text-slate-500">Proyek: ${task.project}</p>`;
-                    modalTaskList.appendChild(taskEl);
-                  }
-                });
-              } else {
-                modalTaskList.innerHTML = '<p class="text-slate-500 text-center">Tidak ada tugas aktif.</p>';
-              }
-
-              openModal(allTasksModal);
+              deleteConfirmationText.innerHTML = `Tindakan ini tidak dapat dibatalkan. Mohon ketik <strong class="text-slate-800">${programmer.nama_lengkap}</strong> untuk konfirmasi.`;
+              confirmDeleteButton.dataset.programmerName = programmer.nama_lengkap;
+              deleteConfirmationInput.value = "";
+              confirmDeleteButton.disabled = true;
+              openModal(deleteModal);
             }
           });
         });
       }
 
-      // --- Filter Logic ---
-      const searchInput = document.getElementById("search-input");
-      const teamFilter = document.getElementById("team-filter");
-      const statusFilter = document.getElementById("status-filter");
-      const applyFilterButton = document.getElementById("apply-filter-button");
+      // --- FORM SUBMISSION LOGIC (CREATE/UPDATE) ---
+      programmerForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(programmerForm);
+        const data = Object.fromEntries(formData.entries());
+        const programmerId = programmerIdInput.value;
 
-      function applyFilters() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedTeam = teamFilter.value;
-        const selectedStatus = statusFilter.value;
+        const isUpdating = !!programmerId;
+        const endpoint = isUpdating ? "update-programmer" : "create-programmer";
 
-        const filteredData = programmers.filter((p) => {
-          const nameMatch = p.name.toLowerCase().includes(searchTerm);
-          const npmMatch = p.npm.includes(searchTerm);
-          const teamMatch = !selectedTeam || p.teams.includes(selectedTeam);
-          const statusMatch = !selectedStatus || p.status === selectedStatus;
+        if (isUpdating) {
+          data.email = emailInput.value;
+        }
 
-          return (nameMatch || npmMatch) && teamMatch && statusMatch;
-        });
+        const body = isUpdating ? { ...data, programmerId } : data;
 
-        renderProgrammerTable(filteredData);
-      }
+        modalSubmitButton.disabled = true;
+        const originalButtonText = modalSubmitButton.innerHTML;
+        modalSubmitButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
 
-      applyFilterButton.addEventListener("click", applyFilters);
+        try {
+          const response = await fetch(`${SUPABASE_URL}/functions/v1/${endpoint}`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${SUPABASE_ANON_KEY}`, apikey: SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
 
-      // --- Dropdown Logic ---
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || "Terjadi kesalahan");
+
+          showNotification(result.message, "success");
+          fetchInitialData();
+          closeModal(programmerModal);
+        } catch (error) {
+          showNotification(`Gagal: ${error.message}`, "error");
+        } finally {
+          modalSubmitButton.disabled = false;
+          modalSubmitButton.innerHTML = originalButtonText;
+        }
+      });
+
+      // --- DELETE CONFIRMATION LOGIC ---
+      deleteConfirmationInput.addEventListener("input", (e) => {
+        confirmDeleteButton.disabled = e.target.value !== confirmDeleteButton.dataset.programmerName;
+      });
+
+      confirmDeleteButton.addEventListener("click", async () => {
+        if (!currentProgrammerIdToDelete) return;
+
+        confirmDeleteButton.disabled = true;
+        const originalButtonText = confirmDeleteButton.innerHTML;
+        confirmDeleteButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
+
+        try {
+          const response = await fetch(`${SUPABASE_URL}/functions/v1/delete-programmer`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${SUPABASE_ANON_KEY}`, apikey: SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+            body: JSON.stringify({ programmerId: currentProgrammerIdToDelete }),
+          });
+
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.error || "Gagal menghapus programmer.");
+
+          showNotification(result.message, "success");
+          fetchInitialData();
+          closeModal(deleteModal);
+        } catch (error) {
+          showNotification(`Gagal: ${error.message}`, "error");
+        } finally {
+          confirmDeleteButton.disabled = false;
+          confirmDeleteButton.innerHTML = originalButtonText;
+          deleteConfirmationInput.value = "";
+          currentProgrammerIdToDelete = null;
+        }
+      });
+
+      // --- LOGIKA DROPDOWN ---
       const profileButton = document.getElementById("profile-button");
       const profileDropdown = document.getElementById("profile-dropdown");
       const notificationButton = document.getElementById("notification-button");
       const notificationDropdown = document.getElementById("notification-dropdown");
 
       function closeAllDropdowns() {
-        if (profileDropdown && !profileDropdown.classList.contains("hidden")) {
+        if (!profileDropdown.classList.contains("hidden")) {
           profileDropdown.classList.add("opacity-0", "scale-95");
           setTimeout(() => profileDropdown.classList.add("hidden"), 200);
         }
-        if (notificationDropdown && !notificationDropdown.classList.contains("hidden")) {
+        if (!notificationDropdown.classList.contains("hidden")) {
           notificationDropdown.classList.add("opacity-0", "scale-95");
           setTimeout(() => notificationDropdown.classList.add("hidden"), 200);
         }
       }
 
-      function toggleDropdown(dropdownToToggle) {
-        const isHidden = dropdownToToggle.classList.contains("hidden");
-        const currentlyOpenDropdown = profileDropdown === dropdownToToggle ? notificationDropdown : profileDropdown;
-
+      function toggleDropdown(dropdown) {
+        const isHidden = dropdown.classList.contains("hidden");
         closeAllDropdowns();
-
         if (isHidden) {
-          dropdownToToggle.classList.remove("hidden");
-          setTimeout(() => {
-            dropdownToToggle.classList.remove("opacity-0", "scale-95");
-          }, 10);
+          dropdown.classList.remove("hidden");
+          setTimeout(() => dropdown.classList.remove("opacity-0", "scale-95"), 10);
         }
       }
 
-      profileButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleDropdown(profileDropdown);
-      });
+      profileButton.addEventListener("click", (e) => e.stopPropagation() || toggleDropdown(profileDropdown));
+      notificationButton.addEventListener("click", (e) => e.stopPropagation() || toggleDropdown(notificationDropdown));
+      window.addEventListener("click", closeAllDropdowns);
 
-      notificationButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleDropdown(notificationDropdown);
-      });
-
-      window.addEventListener("click", (e) => {
-        closeAllDropdowns();
-      });
-
-      // --- Export to CSV Logic ---
-      const exportButton = document.getElementById("export-button");
-
-      function exportToCSV() {
-        const allProgrammers = programmers;
-        const headers = ["Nama", "NPM", "Jurusan", "Email", "Tim"];
-        const csvRows = [headers.join(",")];
-
-        for (const programmer of allProgrammers) {
-          const values = [`"${programmer.name}"`, `"${programmer.npm}"`, `"${programmer.major}"`, `"${programmer.email}"`, `"${programmer.teams.join("; ")}"`];
-          csvRows.push(values.join(","));
-        }
-
-        const csvString = csvRows.join("\n");
-        const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-
-        const link = document.createElement("a");
-        if (link.download !== undefined) {
-          const url = URL.createObjectURL(blob);
-          link.setAttribute("href", url);
-          link.setAttribute("download", "daftar-programmer.csv");
-          link.style.visibility = "hidden";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-      }
-
-      exportButton.addEventListener("click", exportToCSV);
-
-      // Initial Render
-      renderProgrammerTable();
-
-      document.addEventListener("DOMContentLoaded", function () {
-        // --- Logout Logic ---
-        const logoutButton = document.getElementById("logout-button");
-        if (logoutButton) {
-          logoutButton.addEventListener("click", (e) => {
-            e.preventDefault(); // Mencegah link default berjalan
-
-            // Di aplikasi nyata, Anda mungkin akan menghapus token sesi di sini
-            console.log("Logging out...");
-
-            // Arahkan pengguna kembali ke halaman login
-            window.location.href = "../authentication.html?status=logout_success";
-          });
-        }
-      });
+      // --- INISIALISASI ---
+      document.addEventListener("DOMContentLoaded", fetchInitialData);
     </script>
   </body>
 </html>
