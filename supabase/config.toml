@@ -6,130 +6,104 @@ port = 54325
 enabled = true
 verify_jwt = true
 import_map = "./functions/requests/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/requests/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/requests/*.html" ]
 
 [functions.approve-request]
 enabled = true
 verify_jwt = true
 import_map = "./functions/approve-request/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/approve-request/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/approve-request/*.html" ]
 
 [functions.reject-request]
 enabled = true
 verify_jwt = true
 import_map = "./functions/reject-request/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/reject-request/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/reject-request/*.html" ]
 
 [functions.get-programmers]
 enabled = true
 verify_jwt = true
 import_map = "./functions/get-programmers/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/get-programmers/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/get-programmers/*.html" ]
 
 [functions.get-teams]
 enabled = true
 verify_jwt = true
 import_map = "./functions/get-teams/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/get-teams/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/get-teams/*.html" ]
 
 [functions.create-team]
 enabled = true
 verify_jwt = true
 import_map = "./functions/create-team/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/create-team/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/create-team/*.html" ]
 
 [functions.update-team]
 enabled = true
 verify_jwt = true
 import_map = "./functions/update-team/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/update-team/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/update-team/*.html" ]
 
 [functions.delete-team]
 enabled = true
 verify_jwt = true
 import_map = "./functions/delete-team/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/delete-team/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/delete-team/*.html" ]
 
 [functions.get-tasks]
 enabled = true
 verify_jwt = true
 import_map = "./functions/get-tasks/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/get-tasks/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/get-tasks/*.html" ]
 
 [functions.update-programmer]
 enabled = true
 verify_jwt = true
 import_map = "./functions/update-programmer/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/update-programmer/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/update-programmer/*.html" ]
 
 [functions.create-programmer]
 enabled = true
 verify_jwt = true
 import_map = "./functions/create-programmer/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/create-programmer/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/create-programmer/*.html" ]
 
 [functions.delete-programmer]
 enabled = true
 verify_jwt = true
 import_map = "./functions/delete-programmer/deno.json"
+entrypoint = "./functions/delete-programmer/index.ts"
+
+[functions.create-task]
+enabled = true
+verify_jwt = true
+import_map = "./functions/create-task/deno.json"
+entrypoint = "./functions/create-task/index.ts"
+
+[functions.create-request]
+enabled = true
+verify_jwt = false
+import_map = "./functions/create-request/deno.json"
+entrypoint = "./functions/create-request/index.ts"
+
+[functions.get-my-profile]
+enabled = true
+verify_jwt = true
+import_map = "./functions/get-my-profile/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
-entrypoint = "./functions/delete-programmer/index.ts"
+entrypoint = "./functions/get-my-profile/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/delete-programmer/*.html" ]
+# static_files = [ "./functions/get-my-profile/*.html" ]
+
+[functions.update-my-profile]
+enabled = true
+verify_jwt = true
+import_map = "./functions/update-my-profile/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/update-my-profile/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/update-my-profile/*.html" ]

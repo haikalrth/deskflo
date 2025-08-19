@@ -123,7 +123,17 @@
           </div>
         </header>
         <div class="p-8">
-          <div class="flex justify-end mb-6">
+          <div class="flex justify-end mb-6 space-x-3">
+            <button id="export-csv-button" class="bg-white text-slate-700 border border-slate-300 font-semibold px-4 py-2 rounded-lg hover:bg-slate-50 flex items-center space-x-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path
+                  fill-rule="evenodd"
+                  d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              <span>Export CSV</span>
+            </button>
             <button id="add-programmer-button" class="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center space-x-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg
@@ -239,6 +249,21 @@
       </div>
     </div>
 
+    <!-- Active Tasks Modal -->
+    <div id="active-tasks-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden modal-backdrop opacity-0">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg transform scale-95 modal-content">
+        <div class="flex justify-between items-center p-6 border-b">
+          <h3 id="active-tasks-title" class="text-xl font-bold">Tugas Aktif: Nama Programmer</h3>
+          <button class="close-modal-button text-slate-500 hover:text-slate-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <div id="active-tasks-list" class="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
+          <!-- Daftar tugas akan diisi oleh JavaScript -->
+        </div>
+      </div>
+    </div>
+
     <script type="module">
       import { showNotification } from "../notifications.js";
 
@@ -248,6 +273,7 @@
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRueWpzcmxyZnVobW56dWh6cnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDk0MjcsImV4cCI6MjA3MDIyNTQyN30.sK3BqfLMS36-N5lNuED3ehYZ6QbDgkdTpTngKPv20x8";
       let allProgrammers = [];
       let allTeams = [];
+      let allTasks = [];
       let currentProgrammerIdToDelete = null;
 
       // --- FUNGSI FETCH DATA ---
@@ -255,17 +281,20 @@
         const tableBody = document.getElementById("programmer-table-body");
         tableBody.innerHTML = '<div class="text-center p-8 text-slate-500 col-span-full">Memuat data...</div>';
         try {
-          // Ambil data programmer dan tim secara bersamaan
-          const [programmersResponse, teamsResponse] = await Promise.all([
+          // Ambil semua data yang diperlukan secara bersamaan
+          const [programmersResponse, teamsResponse, tasksResponse] = await Promise.all([
             fetch(`${SUPABASE_URL}/functions/v1/get-programmers`, { headers: { Authorization: `Bearer ${SUPABASE_ANON_KEY}`, apikey: SUPABASE_ANON_KEY } }),
             fetch(`${SUPABASE_URL}/functions/v1/get-teams`, { headers: { Authorization: `Bearer ${SUPABASE_ANON_KEY}`, apikey: SUPABASE_ANON_KEY } }),
+            fetch(`${SUPABASE_URL}/functions/v1/get-tasks`, { headers: { Authorization: `Bearer ${SUPABASE_ANON_KEY}`, apikey: SUPABASE_ANON_KEY } }),
           ]);
 
           if (!programmersResponse.ok) throw new Error("Gagal mengambil data programmer");
           if (!teamsResponse.ok) throw new Error("Gagal mengambil data tim");
+          if (!tasksResponse.ok) throw new Error("Gagal mengambil data tugas");
 
           allProgrammers = await programmersResponse.json();
           allTeams = await teamsResponse.json();
+          allTasks = await tasksResponse.json();
 
           // Setelah semua data ada, render tabel dan filter
           populateTeamFilter();
@@ -279,7 +308,6 @@
       // --- FUNGSI UNTUK MENGISI FILTER TIM ---
       function populateTeamFilter() {
         const teamFilter = document.getElementById("team-filter");
-        // Kosongkan opsi yang ada kecuali yang pertama ("Semua Tim")
         teamFilter.innerHTML = '<option value="">Semua Tim</option>';
         allTeams.forEach((team) => {
           const option = document.createElement("option");
@@ -287,6 +315,22 @@
           option.textContent = team.nama_tim;
           teamFilter.appendChild(option);
         });
+      }
+
+      // --- FUNGSI BANTUAN UNTUK STATUS BADGE ---
+      function getProgrammerStatusBadge(status) {
+        if (!status) {
+          return `<span class="flex items-center text-slate-500"><span class="h-2 w-2 rounded-full bg-slate-400 mr-2"></span>Standby</span>`;
+        }
+        switch (status.toLowerCase()) {
+          case "on task":
+            return `<span class="flex items-center text-green-800"><span class="h-2 w-2 rounded-full bg-green-500 mr-2"></span>On Task</span>`;
+          case "on leave":
+            return `<span class="flex items-center text-amber-800"><span class="h-2 w-2 rounded-full bg-amber-500 mr-2"></span>On Leave</span>`;
+          case "standby":
+          default:
+            return `<span class="flex items-center text-slate-500"><span class="h-2 w-2 rounded-full bg-slate-400 mr-2"></span>Standby</span>`;
+        }
       }
 
       // --- FUNGSI UNTUK MERENDER TABEL ---
@@ -301,6 +345,12 @@
           const row = document.createElement("div");
           row.className = "grid grid-cols-7 gap-4 items-center bg-white p-4 rounded-lg shadow-sm border border-slate-200";
 
+          // Hitung tugas aktif untuk programmer saat ini
+          const activeTasksCount = allTasks.filter((task) => task.assignee_name === p.nama_lengkap && task.status !== "Completed").length;
+
+          // Tentukan status berdasarkan tugas aktif
+          const currentStatus = activeTasksCount > 0 ? "On Task" : "Standby";
+
           // Cari tim untuk programmer saat ini
           const programmerTeams = allTeams.filter((team) => team.members.some((member) => member.id === p.id));
           const teamTags =
@@ -308,8 +358,11 @@
               ? programmerTeams.map((team) => `<span class="text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800">${team.nama_tim}</span>`).join(" ")
               : '<span class="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-800">-</span>';
 
-          const statusHtml = `<span class="flex items-center text-slate-500"><span class="h-2 w-2 rounded-full bg-slate-400 mr-2"></span>Standby</span>`;
-          const taskHtml = '<span class="text-slate-400">-</span>';
+          const statusHtml = getProgrammerStatusBadge(currentStatus);
+          const taskHtml =
+            activeTasksCount > 0
+              ? `<button class="font-semibold text-slate-800 hover:text-indigo-600 active-tasks-button" data-programmer-name="${p.nama_lengkap}">${activeTasksCount} Tugas</button>`
+              : '<span class="text-slate-400">-</span>';
 
           row.innerHTML = `
             <div class="col-span-1 font-semibold text-slate-900">${p.nama_lengkap}</div>
@@ -319,8 +372,8 @@
             <div class="col-span-1">${statusHtml}</div>
             <div class="col-span-1">${taskHtml}</div>
             <div class="col-span-1 text-center space-x-3">
-                <button class="font-medium text-slate-600 hover:underline edit-programmer-button" data-programmer-id="${p.id}">Edit</button>
-                <button class="font-medium text-rose-600 hover:underline delete-programmer-button" data-programmer-id="${p.id}">Hapus</button>
+              <button class="font-medium text-slate-600 hover:underline edit-programmer-button" data-programmer-id="${p.id}">Edit</button>
+              <button class="font-medium text-rose-600 hover:underline delete-programmer-button" data-programmer-id="${p.id}">Hapus</button>
             </div>
           `;
           tableBody.appendChild(row);
@@ -357,9 +410,39 @@
         if (event.key === "Enter") applyFilters();
       });
 
+      // --- LOGIKA EXPORT CSV ---
+      function exportToCSV() {
+        const headers = ["Nama Lengkap", "NPM", "Jurusan", "Email", "Role", "Tim"];
+        const csvRows = [headers.join(",")];
+
+        allProgrammers.forEach((p) => {
+          const programmerTeams = allTeams
+            .filter((team) => team.members.some((member) => member.id === p.id))
+            .map((team) => team.nama_tim)
+            .join("; "); // Gunakan semicolon jika satu programmer bisa di banyak tim
+
+          const row = [`"${p.nama_lengkap}"`, `"${p.npm}"`, `"${p.jurusan || ""}"`, `"${p.email}"`, `"${p.role}"`, `"${programmerTeams || ""}"`];
+          csvRows.push(row.join(","));
+        });
+
+        const csvString = csvRows.join("\n");
+        const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "daftar_programmer.csv");
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      document.getElementById("export-csv-button").addEventListener("click", exportToCSV);
+
       // --- LOGIKA MODAL ---
       const programmerModal = document.getElementById("programmer-modal");
       const deleteModal = document.getElementById("delete-modal");
+      const activeTasksModal = document.getElementById("active-tasks-modal");
       const addProgrammerButton = document.getElementById("add-programmer-button");
       const closeModalButtons = document.querySelectorAll(".close-modal-button");
       const closeDeleteModalButton = document.querySelector(".close-delete-modal-button");
@@ -386,7 +469,12 @@
         setTimeout(() => modal.classList.add("hidden"), 300);
       };
 
-      closeModalButtons.forEach((button) => button.addEventListener("click", () => closeModal(programmerModal)));
+      closeModalButtons.forEach((button) => {
+        button.addEventListener("click", (e) => {
+          const modalToClose = e.target.closest(".modal-backdrop");
+          if (modalToClose) closeModal(modalToClose);
+        });
+      });
       closeDeleteModalButton.addEventListener("click", () => closeModal(deleteModal));
 
       addProgrammerButton.addEventListener("click", () => {
@@ -434,6 +522,34 @@
               confirmDeleteButton.disabled = true;
               openModal(deleteModal);
             }
+          });
+        });
+
+        // Listener untuk tombol Tugas Aktif
+        document.querySelectorAll(".active-tasks-button").forEach((button) => {
+          button.addEventListener("click", () => {
+            const programmerName = button.dataset.programmerName;
+            const tasks = allTasks.filter((t) => t.assignee_name === programmerName && t.status !== "Completed");
+
+            document.getElementById("active-tasks-title").textContent = `Tugas Aktif: ${programmerName}`;
+            const taskList = document.getElementById("active-tasks-list");
+            taskList.innerHTML = "";
+
+            if (tasks.length > 0) {
+              tasks.forEach((task) => {
+                const taskElement = document.createElement("div");
+                taskElement.className = "bg-slate-100 p-3 rounded-lg";
+                taskElement.innerHTML = `
+                            <p class="font-semibold text-slate-800">${task.title}</p>
+                            <p class="text-sm text-slate-500">Proyek: ${task.project_name || "Tugas Individual"}</p>
+                        `;
+                taskList.appendChild(taskElement);
+              });
+            } else {
+              taskList.innerHTML = '<p class="text-slate-500">Tidak ada tugas aktif.</p>';
+            }
+
+            openModal(activeTasksModal);
           });
         });
       }
@@ -538,6 +654,16 @@
           dropdown.classList.remove("hidden");
           setTimeout(() => dropdown.classList.remove("opacity-0", "scale-95"), 10);
         }
+      }
+
+      // Logout
+      const logoutButton = document.getElementById("logout-button");
+      if (logoutButton) {
+        logoutButton.addEventListener("click", (e) => {
+          e.preventDefault();
+          console.log("Logging out...");
+          window.location.href = "../authentication.html?status=logout_success";
+        });
       }
 
       profileButton.addEventListener("click", (e) => e.stopPropagation() || toggleDropdown(profileDropdown));

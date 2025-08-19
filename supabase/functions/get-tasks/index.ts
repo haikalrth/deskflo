@@ -25,19 +25,19 @@ serve(async (req: Request) => {
   }
 
   try {
-    // Ambil semua kolom, urut terbaru. TANPA prefix "tasks."
+    // Ambil semua kolom, urut terbaru.
     const { data, error } = await supabase
       .from("tasks")
       .select(
         `
-    id,
-    judul,
-    deskripsi,
-    status,
-    tenggat_waktu,
-    created_at,
-    profiles:assigned_to (nama_lengkap)
-  `
+        id,
+        judul,
+        deskripsi,
+        status,
+        tenggat_waktu,
+        created_at,
+        profiles:assigned_to (nama_lengkap)
+      `
       )
       .order("created_at", { ascending: false });
 
@@ -45,17 +45,17 @@ serve(async (req: Request) => {
 
     // Normalisasi field agar cocok dengan jobs-admin.html
     const normalized = (data ?? []).map((t: any) => ({
-      id: t.id ?? t.task_id ?? t.uuid,
-      title: t.title ?? t.judul ?? t.name ?? t.task_title ?? "(tanpa judul)",
-      description: t.description ?? t.deskripsi ?? t.detail ?? null,
-      status: t.status ?? t.state ?? "In Progress",
-      assignee_name: t.profiles?.nama_lengkap ?? "-", // ✅ ambil nama lengkap
-      project_name: t.project_name ?? t.project ?? null,
-      team_name: t.team_name ?? t.team ?? null,
+      id: t.id,
+      title: t.judul,
+      description: t.deskripsi,
+      status: t.status,
+      tenggat_waktu: t.tenggat_waktu, // ✅ Deadline ditambahkan di sini
+      assignee_name: t.profiles?.nama_lengkap ?? "-",
+      project_name: t.project_name ?? null,
+      team_name: t.team_name ?? null,
       pr_link: t.pr_link ?? null,
       original_description: t.original_description ?? null,
-      subtasks: t.subtasks ?? null,
-      created_at: t.created_at ?? null,
+      created_at: t.created_at,
     }));
 
     return new Response(JSON.stringify(normalized), { headers: corsHeaders });

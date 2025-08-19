@@ -99,6 +99,7 @@
               <div>
                 <button
                   type="submit"
+                  id="register-button"
                   class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300"
                 >
                   Kirim Pengajuan
@@ -158,6 +159,7 @@
               <div>
                 <button
                   type="submit"
+                  id="login-button"
                   class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-300"
                 >
                   Login
@@ -244,10 +246,22 @@
     </div>
 
     <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
       import { showNotification } from "./notifications.js";
 
+      // --- MENGGUNAKAN KUNCI API DARI PROYEK LIVE SUPABASE ANDA ---
+      const SUPABASE_URL = "https://dnyjsrlrfuhmnzuhzrux.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRueWpzcmxyZnVobW56dWh6cnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDk0MjcsImV4cCI6MjA3MDIyNTQyN30.sK3BqfLMS36-N5lNuED3ehYZ6QbDgkdTpTngKPv20x8";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
       document.addEventListener("DOMContentLoaded", function () {
-        // Logika untuk menampilkan/menyembunyikan kata sandi
+        // --- UI Elements ---
+        const loginForm = document.getElementById("login-form");
+        const registrationForm = document.getElementById("registration-form");
+        const forgotPasswordForm = document.getElementById("forgot-password-form");
+
+        // --- UI Logic (Animasi, dll) ---
         const togglePassword = document.getElementById("togglePassword");
         const passwordInput = document.getElementById("password");
         const eyeOpen = document.getElementById("eye-open");
@@ -262,7 +276,6 @@
           });
         }
 
-        // Logika untuk transisi geser panel branding
         const authContainer = document.getElementById("auth-container");
         const triggerRegisterLink = document.getElementById("trigger-register");
         const triggerLoginLink = document.getElementById("trigger-login");
@@ -291,58 +304,10 @@
           });
         }
 
-        // --- Logika untuk Menampilkan Notifikasi Logout ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const status = urlParams.get("status");
-
-        if (status === "logout_success") {
-          showNotification("Anda telah berhasil keluar dari akun Anda.", "success");
-        }
-
-        // Logika untuk mengarahkan ke dashboard setelah login
-        const loginForm = document.getElementById("login-form");
-        const emailInput = document.getElementById("email");
-        if (loginForm && emailInput) {
-          loginForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const email = emailInput.value.toLowerCase();
-            let destination = "";
-
-            if (email.includes("admin")) {
-              destination = "admin/dashboard-admin.html";
-            } else if (email.includes("manager")) {
-              destination = "manager/dashboard-manager.html";
-            } else {
-              destination = "programmer/dashboard-programmer.html";
-            }
-
-            showNotification("Login berhasil! Mengarahkan ke dashboard...", "success");
-
-            setTimeout(() => {
-              window.location.href = destination;
-            }, 1500);
-          });
-        }
-
-        // Logika untuk notifikasi setelah pengajuan akun
-        const registrationForm = document.getElementById("registration-form");
-        if (registrationForm) {
-          registrationForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            showNotification("Pengajuan Terkirim! Silakan cek email Anda secara berkala.", "success");
-            setTimeout(() => {
-              if (triggerLoginLink) triggerLoginLink.click();
-            }, 500);
-            registrationForm.reset();
-          });
-        }
-
-        // Logika untuk Lupa Kata Sandi
         const forgotPasswordLink = document.getElementById("forgot-password-link");
         const backToLoginLink = document.getElementById("back-to-login-link");
         const loginView = document.getElementById("login-view");
         const forgotPasswordView = document.getElementById("forgot-password-view");
-        const forgotPasswordForm = document.getElementById("forgot-password-form");
 
         const switchToForgotPassword = () => {
           loginView.classList.add("opacity-0");
@@ -376,12 +341,119 @@
           });
         }
 
-        if (forgotPasswordForm) {
-          forgotPasswordForm.addEventListener("submit", (e) => {
+        // --- Notifikasi Logout ---
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("status") === "logout_success") {
+          showNotification("Anda telah berhasil keluar.", "success");
+        }
+
+        // --- LOGIKA LOGIN ---
+        if (loginForm) {
+          loginForm.addEventListener("submit", async function (e) {
             e.preventDefault();
-            showNotification("Instruksi terkirim! Silakan periksa email Anda.", "success");
-            switchToLogin();
-            forgotPasswordForm.reset();
+            const loginButton = document.getElementById("login-button");
+            const originalText = loginButton.innerHTML;
+            loginButton.disabled = true;
+            loginButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+            if (error) {
+              showNotification(error.message, "error");
+              loginButton.disabled = false;
+              loginButton.innerHTML = originalText;
+              return;
+            }
+
+            const { data: profile, error: profileError } = await supabase.from("profiles").select("role, approved").eq("id", data.user.id).single();
+
+            if (profileError || !profile) {
+              showNotification("Gagal memverifikasi pengguna.", "error");
+              supabase.auth.signOut(); // Logout jika profil tidak ditemukan
+              loginButton.disabled = false;
+              loginButton.innerHTML = originalText;
+              return;
+            }
+
+            if (!profile.approved) {
+              showNotification("Akun Anda belum disetujui oleh administrator.", "error");
+              supabase.auth.signOut();
+              loginButton.disabled = false;
+              loginButton.innerHTML = originalText;
+              return;
+            }
+
+            showNotification("Login berhasil! Mengarahkan...", "success");
+            // PERBAIKAN: Mengubah pengecekan menjadi case-insensitive
+            const destination = profile.role.toLowerCase() === "admin" ? "admin/dashboard-admin.html" : "programmer/dashboard-programmer.html";
+            setTimeout(() => {
+              window.location.href = destination;
+            }, 1500);
+          });
+        }
+
+        // --- LOGIKA PENGAJUAN AKUN ---
+        if (registrationForm) {
+          registrationForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const registerButton = document.getElementById("register-button");
+            const originalText = registerButton.innerHTML;
+            registerButton.disabled = true;
+            registerButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
+
+            const requestData = {
+              nama_lengkap: document.getElementById("fullname").value,
+              npm: document.getElementById("npm").value,
+              jurusan: document.getElementById("major").value,
+              email: document.getElementById("register-email").value,
+            };
+
+            try {
+              const response = await fetch(`${SUPABASE_URL}/functions/v1/create-request`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  apikey: SUPABASE_ANON_KEY,
+                },
+                body: JSON.stringify(requestData),
+              });
+
+              const result = await response.json();
+              if (!response.ok) throw new Error(result.error || "Gagal mengirim pengajuan.");
+
+              showNotification("Pengajuan Terkirim! Silakan tunggu persetujuan admin.", "success");
+              setTimeout(() => {
+                if (triggerLoginLink) triggerLoginLink.click();
+              }, 500);
+              registrationForm.reset();
+            } catch (error) {
+              showNotification(error.message, "error");
+            } finally {
+              registerButton.disabled = false;
+              registerButton.innerHTML = originalText;
+            }
+          });
+        }
+
+        // --- LOGIKA LUPA KATA SANDI ---
+        if (forgotPasswordForm) {
+          forgotPasswordForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("forgot-email").value;
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+              redirectTo: window.location.origin + "/reset-password.html",
+            });
+
+            if (error) {
+              showNotification(error.message, "error");
+            } else {
+              showNotification("Instruksi reset kata sandi telah dikirim ke email Anda.", "success");
+              switchToLogin();
+              forgotPasswordForm.reset();
+            }
           });
         }
       });

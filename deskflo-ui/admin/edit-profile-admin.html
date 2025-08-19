@@ -162,31 +162,26 @@
                   <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label for="full-name" class="block text-sm font-medium text-slate-700">Nama Lengkap</label>
-                      <input type="text" id="full-name" value="Andi Wijaya" class="mt-1 block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                      <input type="text" id="full-name" name="nama_lengkap" class="mt-1 block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                     </div>
                     <div>
                       <label for="email" class="block text-sm font-medium text-slate-700">Alamat Email</label>
-                      <input
-                        type="email"
-                        id="email"
-                        value="andi.wijaya@example.com"
-                        class="mt-1 block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      />
+                      <input type="email" id="email" name="email" class="mt-1 block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm bg-slate-100 text-slate-500 cursor-not-allowed" disabled />
                     </div>
                     <div>
                       <label for="npm" class="block text-sm font-medium text-slate-700">ID Pegawai</label>
-                      <input type="text" id="npm" value="ADMIN-001" class="mt-1 block w-full px-4 py-2.5 bg-slate-100 border-slate-300 rounded-lg shadow-sm sm:text-sm" disabled />
+                      <input type="text" id="npm" name="npm" class="mt-1 block w-full px-4 py-2.5 border-slate-300 rounded-lg shadow-sm sm:text-sm" />
                     </div>
                     <div>
                       <label for="major" class="block text-sm font-medium text-slate-700">Jabatan</label>
-                      <input type="text" id="major" value="System Administrator" class="mt-1 block w-full px-4 py-2.5 bg-slate-100 border-slate-300 rounded-lg shadow-sm sm:text-sm" disabled />
+                      <input type="text" id="major" name="jurusan" class="mt-1 block w-full px-4 py-2.5 border-slate-300 rounded-lg shadow-sm sm:text-sm" />
                     </div>
                   </div>
                 </div>
 
                 <div class="p-6 bg-slate-50 rounded-b-2xl flex justify-end space-x-3 mt-4">
                   <button id="cancel-profile-button" type="button" class="bg-white text-slate-700 px-5 py-2.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-sm font-semibold">Batal</button>
-                  <button type="submit" class="bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-indigo-700 text-sm">Simpan Perubahan</button>
+                  <button type="submit" id="save-profile-button" class="bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-indigo-700 text-sm">Simpan Perubahan</button>
                 </div>
               </form>
             </div>
@@ -270,12 +265,93 @@
 
     <script type="module">
       import { showNotification } from "../notifications.js";
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+      const SUPABASE_URL = "https://dnyjsrlrfuhmnzuhzrux.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRueWpzcmxyZnVobW56dWh6cnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDk0MjcsImV4cCI6MjA3MDIyNTQyN30.sK3BqfLMS36-N5lNuED3ehYZ6QbDgkdTpTngKPv20x8";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
       document.addEventListener("DOMContentLoaded", function () {
-        // --- URL Parameter for Return Navigation ---
+        // --- Elemen Form ---
+        const profileForm = document.getElementById("profile-form");
+        const saveProfileButton = document.getElementById("save-profile-button");
+
+        // --- Fungsi untuk memuat data profil ---
+        async function loadProfileData() {
+          const {
+            data: { session },
+            error: sessionError,
+          } = await supabase.auth.getSession();
+          if (sessionError || !session) {
+            window.location.href = "../authentication.html";
+            return;
+          }
+
+          try {
+            const response = await fetch(`${SUPABASE_URL}/functions/v1/get-my-profile`, {
+              headers: { Authorization: `Bearer ${session.access_token}` },
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error);
+
+            document.getElementById("full-name").value = data.nama_lengkap || "";
+            document.getElementById("npm").value = data.npm || "";
+            document.getElementById("major").value = data.jurusan || "";
+            document.getElementById("email").value = data.email || "";
+          } catch (error) {
+            showNotification(`Gagal memuat profil: ${error.message}`, "error");
+          }
+        }
+
+        // --- Event Listener untuk simpan profil ---
+        if (profileForm) {
+          profileForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const {
+              data: { session },
+            } = await supabase.auth.getSession();
+            if (!session) return;
+
+            const originalButtonText = saveProfileButton.innerHTML;
+            saveProfileButton.disabled = true;
+            saveProfileButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
+
+            const profileData = {
+              nama_lengkap: document.getElementById("full-name").value,
+              npm: document.getElementById("npm").value,
+              jurusan: document.getElementById("major").value,
+            };
+
+            try {
+              const response = await fetch(`${SUPABASE_URL}/functions/v1/update-my-profile`, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${session.access_token}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(profileData),
+              });
+              const result = await response.json();
+              if (!response.ok) throw new Error(result.error);
+
+              showNotification(result.message, "success");
+            } catch (error) {
+              showNotification(`Gagal memperbarui profil: ${error.message}`, "error");
+            } finally {
+              saveProfileButton.disabled = false;
+              saveProfileButton.innerHTML = originalButtonText;
+            }
+          });
+        }
+
+        // --- Panggil fungsi untuk memuat data saat halaman dibuka ---
+        loadProfileData();
+
+        // --- Logika UI Lainnya (Dropdown, Tabs, dll) ---
+        // ... (kode UI Anda yang sudah ada tetap di sini) ...
         const urlParams = new URLSearchParams(window.location.search);
         const returnPage = urlParams.get("from") || "dashboard.html";
-
-        // --- Dropdown Logic ---
         const profileButton = document.getElementById("profile-button");
         const profileDropdown = document.getElementById("profile-dropdown");
         const notificationButton = document.getElementById("notification-button");
@@ -316,8 +392,6 @@
           });
         }
         window.addEventListener("click", () => closeAllDropdowns());
-
-        // --- Avatar Upload Logic ---
         const avatarUpload = document.getElementById("avatar-upload");
         const avatarUploadButton = document.getElementById("avatar-upload-button");
         const avatarPreview = document.getElementById("avatar-preview");
@@ -339,8 +413,6 @@
         if (avatarUploadButton) {
           avatarUploadButton.addEventListener("change", handleFileSelect);
         }
-
-        // --- Tab Switching Logic ---
         const profileTab = document.getElementById("profile-tab");
         const securityTab = document.getElementById("security-tab");
         const profileContent = document.getElementById("profile-content");
@@ -355,7 +427,6 @@
         }
 
         if (profileTab && securityTab && profileContent && securityContent && tabGlider) {
-          // Initial position
           moveGlider(profileTab);
 
           profileTab.addEventListener("click", (e) => {
@@ -384,41 +455,13 @@
             moveGlider(securityTab);
           });
         }
-
-        // --- Profile Form Logic ---
-        const profileForm = document.getElementById("profile-form");
         const cancelProfileButton = document.getElementById("cancel-profile-button");
 
-        if (profileForm) {
-          profileForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const saveButton = profileForm.querySelector('button[type="submit"]');
-            const originalButtonText = saveButton.innerHTML;
-            saveButton.disabled = true;
-            saveButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
-
-            try {
-              // Simulate API call
-              await new Promise((resolve) => setTimeout(resolve, 1500));
-              showNotification("Profil berhasil diperbarui!", "success");
-              setTimeout(() => {
-                window.location.href = returnPage;
-              }, 1000);
-            } catch (error) {
-              showNotification(`Gagal memperbarui profil: ${error.message}`, "error");
-            } finally {
-              saveButton.disabled = false;
-              saveButton.innerHTML = originalButtonText;
-            }
-          });
-        }
         if (cancelProfileButton) {
           cancelProfileButton.addEventListener("click", () => {
             window.location.href = returnPage;
           });
         }
-
-        // --- Security Form Logic ---
         const securityForm = document.getElementById("security-form");
         const newPasswordInput = document.getElementById("new-password");
         const confirmPasswordInput = document.getElementById("confirm-password");
@@ -469,7 +512,6 @@
             saveButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
 
             try {
-              // Simulate API call
               await new Promise((resolve) => setTimeout(resolve, 1500));
               showNotification("Kata sandi berhasil diubah!", "success");
               securityForm.reset();
@@ -492,8 +534,6 @@
             });
           }
         }
-
-        // --- Toggle Password Visibility ---
         const togglePasswordIcons = document.querySelectorAll(".toggle-password");
         togglePasswordIcons.forEach((icon) => {
           icon.addEventListener("click", function () {
@@ -512,8 +552,6 @@
             }
           });
         });
-
-        // --- Edit Profile Link on Same Page Logic ---
         const editProfileLink = document.getElementById("edit-profile-link");
         if (editProfileLink) {
           editProfileLink.addEventListener("click", (e) => {
@@ -522,17 +560,11 @@
             closeAllDropdowns();
           });
         }
-
-        // --- Logout Logic ---
         const logoutButton = document.getElementById("logout-button");
         if (logoutButton) {
           logoutButton.addEventListener("click", (e) => {
-            e.preventDefault(); // Mencegah link default berjalan
-
-            // Di aplikasi nyata, Anda mungkin akan menghapus token sesi di sini
+            e.preventDefault();
             console.log("Logging out...");
-
-            // Arahkan pengguna kembali ke halaman login
             window.location.href = "../authentication.html?status=logout_success";
           });
         }

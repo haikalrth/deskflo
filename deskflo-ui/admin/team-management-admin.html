@@ -454,6 +454,16 @@
       window.addEventListener("click", () => {
         closeAllDropdowns();
       });
+
+      // Logout
+      const logoutButton = document.getElementById("logout-button");
+      if (logoutButton) {
+        logoutButton.addEventListener("click", (e) => {
+          e.preventDefault();
+          console.log("Logging out...");
+          window.location.href = "../authentication.html?status=logout_success";
+        });
+      }
       // --- [END] KODE PERBAIKAN DROPDOWN ---
 
       document.addEventListener("DOMContentLoaded", fetchInitialData);
