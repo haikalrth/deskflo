@@ -98,10 +98,10 @@
               </button>
               <div id="notification-dropdown" class="dropdown-menu absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
                 <div class="px-4 py-2 font-semibold text-slate-800 border-b">Notifikasi</div>
-                <a href="#" class="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-100"
-                  ><p class="font-medium">Budi Santoso mengajukan review</p>
-                  <p class="text-xs text-slate-500">Tugas: Fixing Bug on Login Page</p></a
-                >
+                <a href="#" class="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-100">
+                  <p class="font-medium">Budi Santoso mengajukan review</p>
+                  <p class="text-xs text-slate-500">Tugas: Fixing Bug on Login Page</p>
+                </a>
               </div>
             </div>
             <div class="relative">
@@ -197,51 +197,25 @@
                       <label for="current-password" class="block text-sm font-medium text-slate-700">Kata Sandi Saat Ini</label>
                       <div class="relative mt-1">
                         <input type="password" id="current-password" class="password-field block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer toggle-password">
-                          <svg class="h-5 w-5 text-gray-400 eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                          </svg>
-                          <svg class="h-5 w-5 text-gray-400 eye-closed hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                            <path d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.955 9.955 0 00-4.512 1.074L3.707 2.293z" />
-                          </svg>
-                        </span>
                       </div>
+                      <!-- PERUBAHAN: Pesan validasi untuk kata sandi saat ini -->
+                      <p id="current-password-match-message" class="text-xs text-emerald-600 mt-2 hidden">
+                        <svg class="inline w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        Kata sandi saat ini cocok.
+                      </p>
                     </div>
                     <div>
                       <label for="new-password" class="block text-sm font-medium text-slate-700">Kata Sandi Baru</label>
                       <div class="relative mt-1">
                         <input type="password" id="new-password" class="password-field block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer toggle-password">
-                          <svg class="h-5 w-5 text-gray-400 eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                          </svg>
-                          <svg class="h-5 w-5 text-gray-400 eye-closed hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                            <path d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.955 9.955 0 00-4.512 1.074L3.707 2.293z" />
-                          </svg>
-                        </span>
                       </div>
                     </div>
                     <div>
                       <label for="confirm-password" class="block text-sm font-medium text-slate-700">Konfirmasi Kata Sandi Baru</label>
                       <div class="relative mt-1">
                         <input type="password" id="confirm-password" class="password-field block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer toggle-password">
-                          <svg class="h-5 w-5 text-gray-400 eye-open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                          </svg>
-                          <svg class="h-5 w-5 text-gray-400 eye-closed hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                            <path d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.955 9.955 0 00-4.512 1.074L3.707 2.293z" />
-                          </svg>
-                        </span>
                       </div>
                       <p id="password-match-message" class="text-xs text-emerald-600 mt-2 hidden">
                         <svg class="inline w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -254,7 +228,7 @@
                 </div>
                 <div class="p-6 bg-slate-50 rounded-b-2xl flex justify-end space-x-3 mt-4">
                   <button id="cancel-security-button" type="button" class="bg-white text-slate-700 px-5 py-2.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-sm font-semibold">Batal</button>
-                  <button id="save-password-button" type="submit" class="bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-indigo-700 text-sm hidden">Simpan Perubahan</button>
+                  <button id="save-password-button" type="submit" class="bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-indigo-700 text-sm">Simpan Perubahan</button>
                 </div>
               </form>
             </div>
@@ -273,9 +247,14 @@
       const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       document.addEventListener("DOMContentLoaded", function () {
+        // --- URL Parameter for Return Navigation ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnPage = urlParams.get("from") || "dashboard-admin.html";
+
         // --- Elemen Form ---
         const profileForm = document.getElementById("profile-form");
         const saveProfileButton = document.getElementById("save-profile-button");
+        const securityForm = document.getElementById("security-form");
 
         // --- Fungsi untuk memuat data profil ---
         async function loadProfileData() {
@@ -336,6 +315,10 @@
               if (!response.ok) throw new Error(result.error);
 
               showNotification(result.message, "success");
+
+              setTimeout(() => {
+                window.location.href = returnPage;
+              }, 1500);
             } catch (error) {
               showNotification(`Gagal memperbarui profil: ${error.message}`, "error");
             } finally {
@@ -345,13 +328,50 @@
           });
         }
 
+        // --- Event Listener untuk ganti password ---
+        if (securityForm) {
+          securityForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const newPassword = document.getElementById("new-password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+
+            if (newPassword !== confirmPassword) {
+              showNotification("Kata sandi baru tidak cocok.", "error");
+              return;
+            }
+            if (newPassword.length < 6) {
+              showNotification("Kata sandi minimal harus 6 karakter.", "error");
+              return;
+            }
+
+            const saveButton = document.getElementById("save-password-button");
+            const originalButtonText = saveButton.innerHTML;
+            saveButton.disabled = true;
+            saveButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
+
+            const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+            if (error) {
+              showNotification(`Gagal mengubah kata sandi: ${error.message}`, "error");
+            } else {
+              showNotification("Kata sandi berhasil diubah!", "success");
+              securityForm.reset();
+              // PERUBAHAN: Sembunyikan pesan validasi setelah berhasil
+              document.getElementById("current-password-match-message").classList.add("hidden");
+              setTimeout(() => {
+                profileTab.click();
+              }, 500);
+            }
+
+            saveButton.disabled = false;
+            saveButton.innerHTML = originalButtonText;
+          });
+        }
+
         // --- Panggil fungsi untuk memuat data saat halaman dibuka ---
         loadProfileData();
 
         // --- Logika UI Lainnya (Dropdown, Tabs, dll) ---
-        // ... (kode UI Anda yang sudah ada tetap di sini) ...
-        const urlParams = new URLSearchParams(window.location.search);
-        const returnPage = urlParams.get("from") || "dashboard.html";
         const profileButton = document.getElementById("profile-button");
         const profileDropdown = document.getElementById("profile-dropdown");
         const notificationButton = document.getElementById("notification-button");
@@ -462,12 +482,48 @@
             window.location.href = returnPage;
           });
         }
-        const securityForm = document.getElementById("security-form");
+
         const newPasswordInput = document.getElementById("new-password");
         const confirmPasswordInput = document.getElementById("confirm-password");
         const passwordMatchMessage = document.getElementById("password-match-message");
         const savePasswordButton = document.getElementById("save-password-button");
         const cancelSecurityButton = document.getElementById("cancel-security-button");
+
+        // --- PERUBAHAN: Logika validasi kata sandi ---
+        const currentPasswordInput = document.getElementById("current-password");
+        const currentPasswordMatchMessage = document.getElementById("current-password-match-message");
+        let validationTimeout;
+
+        if (currentPasswordInput) {
+          currentPasswordInput.addEventListener("input", () => {
+            // Hapus timeout sebelumnya untuk debounce
+            clearTimeout(validationTimeout);
+            currentPasswordMatchMessage.classList.add("hidden"); // Sembunyikan pesan saat mengetik
+            const password = currentPasswordInput.value;
+
+            if (password.length > 5) {
+              // Hanya validasi jika panjangnya cukup
+              validationTimeout = setTimeout(async () => {
+                const email = document.getElementById("email").value;
+                if (!email) return; // Tidak bisa validasi tanpa email
+
+                // Coba sign-in untuk memvalidasi password
+                const { error } = await supabase.auth.signInWithPassword({
+                  email: email,
+                  password: password,
+                });
+
+                if (error) {
+                  // Jika ada error (misal: "Invalid login credentials"), password salah
+                  currentPasswordMatchMessage.classList.add("hidden");
+                } else {
+                  // Jika tidak ada error, password benar
+                  currentPasswordMatchMessage.classList.remove("hidden");
+                }
+              }, 500); // Tunggu 500ms setelah user berhenti mengetik
+            }
+          });
+        }
 
         if (securityForm) {
           const checkPasswordFields = () => {
@@ -504,54 +560,13 @@
             });
           });
 
-          securityForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const saveButton = document.getElementById("save-password-button");
-            const originalButtonText = saveButton.innerHTML;
-            saveButton.disabled = true;
-            saveButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
-
-            try {
-              await new Promise((resolve) => setTimeout(resolve, 1500));
-              showNotification("Kata sandi berhasil diubah!", "success");
-              securityForm.reset();
-              checkPasswordFields();
-              checkPasswordMatch();
-              setTimeout(() => {
-                profileTab.click();
-              }, 500);
-            } catch (error) {
-              showNotification(`Gagal mengubah kata sandi: ${error.message}`, "error");
-            } finally {
-              saveButton.disabled = false;
-              saveButton.innerHTML = originalButtonText;
-            }
-          });
-
           if (cancelSecurityButton) {
             cancelSecurityButton.addEventListener("click", () => {
               profileTab.click();
             });
           }
         }
-        const togglePasswordIcons = document.querySelectorAll(".toggle-password");
-        togglePasswordIcons.forEach((icon) => {
-          icon.addEventListener("click", function () {
-            const input = this.parentElement.querySelector("input");
-            const eyeOpen = this.querySelector(".eye-open");
-            const eyeClosed = this.querySelector(".eye-closed");
 
-            if (input.type === "password") {
-              input.type = "text";
-              eyeOpen.classList.add("hidden");
-              eyeClosed.classList.remove("hidden");
-            } else {
-              input.type = "password";
-              eyeOpen.classList.remove("hidden");
-              eyeClosed.classList.add("hidden");
-            }
-          });
-        });
         const editProfileLink = document.getElementById("edit-profile-link");
         if (editProfileLink) {
           editProfileLink.addEventListener("click", (e) => {
