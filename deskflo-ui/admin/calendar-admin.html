@@ -80,7 +80,7 @@
               </svg>
               Account Approval
             </div>
-            <span class="w-5 h-5 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center">2</span>
+            <span id="approval-count-badge" class="w-5 h-5 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center">...</span>
           </a>
           <a href="jobs-admin.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
@@ -124,7 +124,6 @@
               </div>
             </div>
             <div class="relative">
-              <!-- Contoh di dashboard-admin.html, programmer-admin.html, dll. -->
               <div id="profile-button" class="flex items-center space-x-3 cursor-pointer">
                 <img id="topbar-user-avatar" class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=U" alt="User Avatar" />
                 <div>
@@ -143,8 +142,7 @@
           <div class="bg-white p-4 rounded-xl shadow-sm mb-6">
             <select id="team-filter-calendar" class="w-full md:w-auto px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
               <option value="all">Tampilkan Semua Tim</option>
-              <option value="frontend">Tim Frontend</option>
-              <option value="api">Tim API</option>
+              <!-- Team options will be injected here -->
             </select>
           </div>
           <div class="bg-white rounded-xl shadow-sm p-6"><div id="calendar"></div></div>
@@ -175,12 +173,29 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <script>
-      // --- Dropdown Logic ---
+    <script type="module" src="../shared-ui.js"></script>
+    <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+      import { showNotification } from "../notifications.js";
+      import { handleLogout } from "../shared-ui.js";
+
+      const SUPABASE_URL = "https://dnyjsrlrfuhmnzuhzrux.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRueWpzcmxyZnVobW56dWh6cnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDk0MjcsImV4cCI6MjA3MDIyNTQyN30.sK3BqfLMS36-N5lNuED3ehYZ6QbDgkdTpTngKPv20x8";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      let allTasks = [];
+      let calendar;
+
       const profileButton = document.getElementById("profile-button");
       const profileDropdown = document.getElementById("profile-dropdown");
       const notificationButton = document.getElementById("notification-button");
       const notificationDropdown = document.getElementById("notification-dropdown");
+      const calendarEl = document.getElementById("calendar");
+      const taskDetailModal = document.getElementById("task-detail-modal");
+      const closeModalButtons = document.querySelectorAll(".close-modal-button");
+      const teamFilter = document.getElementById("team-filter-calendar");
+      const logoutButton = document.getElementById("logout-button");
 
       function closeDropdown(dropdown) {
         if (dropdown && !dropdown.classList.contains("hidden")) {
@@ -191,140 +206,138 @@
 
       function toggleDropdown(dropdownToToggle) {
         const isHidden = dropdownToToggle.classList.contains("hidden");
-        const currentlyOpenDropdown = profileDropdown === dropdownToToggle ? notificationDropdown : profileDropdown;
-
-        closeDropdown(currentlyOpenDropdown);
-
+        closeAllDropdowns();
         if (isHidden) {
           dropdownToToggle.classList.remove("hidden");
           setTimeout(() => {
             dropdownToToggle.classList.remove("opacity-0", "scale-95");
           }, 10);
-        } else {
-          closeDropdown(dropdownToToggle);
         }
       }
-
-      profileButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleDropdown(profileDropdown);
-      });
-      notificationButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleDropdown(notificationDropdown);
-      });
-      window.addEventListener("click", () => {
-        closeAllDropdowns();
-      });
 
       function closeAllDropdowns() {
         closeDropdown(profileDropdown);
         closeDropdown(notificationDropdown);
       }
 
-      // --- Calendar Logic ---
+      const openModal = (modal) => {
+        modal.classList.remove("hidden");
+        setTimeout(() => {
+          modal.classList.remove("opacity-0");
+          modal.querySelector(".modal-content").classList.remove("scale-95");
+        }, 10);
+      };
+
+      const closeModal = (modal) => {
+        if (modal) {
+          modal.classList.add("opacity-0");
+          modal.querySelector(".modal-content").classList.add("scale-95");
+          setTimeout(() => modal.classList.add("hidden"), 300);
+        }
+      };
+
+      function formatTasksForCalendar(tasks) {
+        return tasks
+          .filter((task) => task.tenggat_waktu) // Hanya tampilkan tugas yang punya deadline
+          .map((task) => {
+            let color = "#4f46e5"; // Default color (Indigo)
+            if (task.status === "Completed") {
+              color = "#10b981"; // Emerald for completed
+            } else if (new Date(task.tenggat_waktu) < new Date()) {
+              color = "#ef4444"; // Red for overdue
+            }
+            return {
+              id: task.id,
+              title: task.title,
+              start: task.tenggat_waktu,
+              backgroundColor: color,
+              extendedProps: {
+                teamId: task.team_id,
+                programmer: task.assignee_name,
+                description: task.description,
+              },
+            };
+          });
+      }
+
+      async function initializeCalendar() {
+        try {
+          const {
+            data: { session },
+            error: sessionError,
+          } = await supabase.auth.getSession();
+          if (sessionError || !session) {
+            window.location.href = "../authentication.html";
+            return;
+          }
+
+          const [tasksResponse, teamsResponse] = await Promise.all([
+            fetch(`${SUPABASE_URL}/functions/v1/get-tasks`, { headers: { Authorization: `Bearer ${session.access_token}` } }),
+            fetch(`${SUPABASE_URL}/functions/v1/get-teams`, { headers: { Authorization: `Bearer ${session.access_token}` } }),
+          ]);
+
+          if (!tasksResponse.ok) throw new Error("Gagal memuat tugas.");
+          if (!teamsResponse.ok) throw new Error("Gagal memuat tim.");
+
+          allTasks = await tasksResponse.json();
+          const allTeams = await teamsResponse.json();
+
+          // Populate team filter dropdown
+          teamFilter.innerHTML = '<option value="all">Tampilkan Semua Tim</option>';
+          allTeams.forEach((team) => {
+            const option = document.createElement("option");
+            option.value = team.id;
+            option.textContent = team.nama_tim;
+            teamFilter.appendChild(option);
+          });
+
+          const events = formatTasksForCalendar(allTasks);
+
+          calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: "dayGridMonth",
+            headerToolbar: { left: "prev,next today", center: "title", right: "dayGridMonth,timeGridWeek,listWeek" },
+            locale: "id",
+            events: events,
+            eventContent: function (arg) {
+              let newTitle = document.createElement("div");
+              newTitle.innerHTML = `<div class="font-semibold">${arg.event.title}</div><div class="text-xs opacity-80">${arg.event.extendedProps.programmer}</div>`;
+              return { domNodes: [newTitle] };
+            },
+            eventClick: function (info) {
+              const task = info.event;
+              document.getElementById("modal-task-title").textContent = task.title;
+              document.getElementById("modal-assignee").textContent = task.extendedProps.programmer;
+              document.getElementById("modal-description").textContent = task.extendedProps.description;
+              openModal(taskDetailModal);
+            },
+          });
+          calendar.render();
+        } catch (error) {
+          console.error("Calendar Error:", error);
+          calendarEl.innerHTML = `<p class="text-center text-red-500">Gagal memuat kalender: ${error.message}</p>`;
+        }
+      }
+
+      // --- EVENT LISTENERS ---
       document.addEventListener("DOMContentLoaded", function () {
-        // --- Logout Logic ---
-        const logoutButton = document.getElementById("logout-button");
+        initializeCalendar();
+
+        profileButton.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleDropdown(profileDropdown);
+        });
+        notificationButton.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleDropdown(notificationDropdown);
+        });
+        window.addEventListener("click", () => closeAllDropdowns());
+
         if (logoutButton) {
           logoutButton.addEventListener("click", (e) => {
-            e.preventDefault(); // Mencegah link default berjalan
-
-            // Di aplikasi nyata, Anda mungkin akan menghapus token sesi di sini
-            console.log("Logging out...");
-
-            // Arahkan pengguna kembali ke halaman login
-            window.location.href = "../authentication.html?status=logout_success";
+            e.preventDefault();
+            handleLogout();
           });
         }
-
-        const calendarEl = document.getElementById("calendar");
-        const taskDetailModal = document.getElementById("task-detail-modal");
-        const closeModalButtons = document.querySelectorAll(".close-modal-button");
-
-        if (!calendarEl) return;
-
-        const allEvents = [
-          {
-            id: "1",
-            title: "Deadline: Refactor Kode Controller",
-            start: "2025-08-15",
-            backgroundColor: "#ef4444",
-            extendedProps: { team: "api", programmer: "Budi S.", description: "Melakukan refactoring pada UserController.js untuk meningkatkan keterbacaan dan performa." },
-          },
-          {
-            id: "2",
-            title: "Selesai: Fixing Bug",
-            start: "2025-08-08",
-            backgroundColor: "#10b981",
-            display: "list-item",
-            extendedProps: { team: "api", programmer: "Budi S.", description: "Memperbaiki bug validasi email yang tidak berfungsi pada browser Safari." },
-          },
-          {
-            id: "3",
-            title: "Deadline: UI Slicing Checkout",
-            start: "2025-08-25",
-            backgroundColor: "#ef4444",
-            extendedProps: { team: "frontend", programmer: "Citra L.", description: "Membuat komponen UI untuk halaman checkout sesuai dengan desain Figma." },
-          },
-          {
-            id: "4",
-            title: "Deadline: Integrasi API Payment",
-            start: "2025-08-28",
-            backgroundColor: "#ef4444",
-            extendedProps: { team: "api", programmer: "Doni F.", description: "Menghubungkan frontend dengan API payment gateway Xendit." },
-          },
-        ];
-
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: "dayGridMonth",
-          headerToolbar: { left: "prev,next today", center: "title", right: "dayGridMonth,timeGridWeek,listWeek" },
-          locale: "id",
-          events: allEvents,
-          eventContent: function (arg) {
-            let newTitle = document.createElement("div");
-            newTitle.innerHTML = `<div class="font-semibold">${arg.event.title}</div><div class="text-xs opacity-80">${arg.event.extendedProps.programmer}</div>`;
-            return { domNodes: [newTitle] };
-          },
-          eventClick: function (info) {
-            const task = info.event;
-            document.getElementById("modal-task-title").textContent = task.title;
-            document.getElementById("modal-assignee").textContent = task.extendedProps.programmer;
-            document.getElementById("modal-description").textContent = task.extendedProps.description;
-            openModal(taskDetailModal);
-          },
-        });
-        calendar.render();
-
-        const teamFilter = document.getElementById("team-filter-calendar");
-        if (teamFilter) {
-          teamFilter.addEventListener("change", function () {
-            const selectedTeam = this.value;
-            calendar.removeAllEvents();
-            if (selectedTeam === "all") {
-              calendar.addEventSource(allEvents);
-            } else {
-              const filteredEvents = allEvents.filter((event) => event.extendedProps.team === selectedTeam);
-              calendar.addEventSource(filteredEvents);
-            }
-          });
-        }
-
-        const openModal = (modal) => {
-          modal.classList.remove("hidden");
-          setTimeout(() => {
-            modal.classList.remove("opacity-0");
-            modal.querySelector(".modal-content").classList.remove("scale-95");
-          }, 10);
-        };
-
-        const closeModal = (modal) => {
-          if (modal) {
-            modal.classList.add("opacity-0");
-            modal.querySelector(".modal-content").classList.add("scale-95");
-            setTimeout(() => modal.classList.add("hidden"), 300);
-          }
-        };
 
         closeModalButtons.forEach((button) => {
           button.addEventListener("click", (e) => {
@@ -332,6 +345,19 @@
             if (modalToClose) closeModal(modalToClose);
           });
         });
+
+        if (teamFilter) {
+          teamFilter.addEventListener("change", function () {
+            const selectedTeamId = this.value;
+            let filteredTasks = allTasks;
+            if (selectedTeamId !== "all") {
+              filteredTasks = allTasks.filter((task) => task.team_id == selectedTeamId);
+            }
+            const filteredEvents = formatTasksForCalendar(filteredTasks);
+            calendar.removeAllEvents();
+            calendar.addEventSource(filteredEvents);
+          });
+        }
       });
     </script>
   </body>
