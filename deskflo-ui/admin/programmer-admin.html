@@ -109,10 +109,10 @@
             </div>
             <div class="relative">
               <div id="profile-button" class="flex items-center space-x-3 cursor-pointer">
-                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=A" alt="Admin Avatar" />
+                <img id="topbar-user-avatar" class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=U" alt="User Avatar" />
                 <div>
-                  <p class="font-semibold text-sm">Andi Wijaya</p>
-                  <p class="text-xs text-slate-500">Admin</p>
+                  <p id="topbar-user-name" class="font-semibold text-sm">Nama Pengguna</p>
+                  <p id="topbar-user-role" class="text-xs text-slate-500">Role</p>
                 </div>
               </div>
               <div id="profile-dropdown" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
@@ -264,8 +264,11 @@
       </div>
     </div>
 
+    <script type="module" src="../shared-ui.js"></script>
+
     <script type="module">
       import { showNotification } from "../notifications.js";
+      import { handleLogout } from "../shared-ui.js";
 
       // --- KONFIGURASI SUPABASE ---
       const SUPABASE_URL = "https://dnyjsrlrfuhmnzuhzrux.supabase.co";
@@ -385,7 +388,8 @@
       function applyFilters() {
         const searchTerm = document.getElementById("search-input").value.toLowerCase();
         const selectedTeamId = document.getElementById("team-filter").value;
-        // const selectedStatus = document.getElementById("status-filter").value; // Belum diimplementasikan
+        // PERUBAHAN: Ambil nilai dari filter status
+        const selectedStatus = document.getElementById("status-filter").value;
 
         let filteredData = allProgrammers;
 
@@ -397,8 +401,24 @@
         // Filter berdasarkan tim
         if (selectedTeamId) {
           filteredData = filteredData.filter((p) => {
-            // Cek apakah programmer ini ada di dalam tim yang dipilih
             return allTeams.some((team) => team.id == selectedTeamId && team.members.some((member) => member.id === p.id));
+          });
+        }
+
+        // PERUBAHAN: Tambahkan logika filter berdasarkan status
+        if (selectedStatus) {
+          filteredData = filteredData.filter((p) => {
+            const activeTasksCount = allTasks.filter((task) => task.assignee_name === p.nama_lengkap && task.status !== "Completed").length;
+
+            const currentStatus = activeTasksCount > 0 ? "On Task" : "Standby";
+
+            // Jika user memilih "On Leave", kita filter programmer yang statusnya bukan "On Task" atau "Standby"
+            // Saat ini, logika ini tidak akan mengembalikan apa-apa karena data 'On Leave' belum ada.
+            if (selectedStatus === "On Leave") {
+              return currentStatus !== "On Task" && currentStatus !== "Standby";
+            }
+
+            return currentStatus === selectedStatus;
           });
         }
 
@@ -419,7 +439,7 @@
           const programmerTeams = allTeams
             .filter((team) => team.members.some((member) => member.id === p.id))
             .map((team) => team.nama_tim)
-            .join("; "); // Gunakan semicolon jika satu programmer bisa di banyak tim
+            .join("; ");
 
           const row = [`"${p.nama_lengkap}"`, `"${p.npm}"`, `"${p.jurusan || ""}"`, `"${p.email}"`, `"${p.role}"`, `"${programmerTeams || ""}"`];
           csvRows.push(row.join(","));
@@ -540,9 +560,9 @@
                 const taskElement = document.createElement("div");
                 taskElement.className = "bg-slate-100 p-3 rounded-lg";
                 taskElement.innerHTML = `
-                            <p class="font-semibold text-slate-800">${task.title}</p>
-                            <p class="text-sm text-slate-500">Proyek: ${task.project_name || "Tugas Individual"}</p>
-                        `;
+                                <p class="font-semibold text-slate-800">${task.title}</p>
+                                <p class="text-sm text-slate-500">Proyek: ${task.project_name || "Tugas Individual"}</p>
+                                `;
                 taskList.appendChild(taskElement);
               });
             } else {
@@ -661,8 +681,7 @@
       if (logoutButton) {
         logoutButton.addEventListener("click", (e) => {
           e.preventDefault();
-          console.log("Logging out...");
-          window.location.href = "../authentication.html?status=logout_success";
+          handleLogout();
         });
       }
 

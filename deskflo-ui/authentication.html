@@ -359,39 +359,54 @@
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
 
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+            try {
+              const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-            if (error) {
-              showNotification(error.message, "error");
+              if (error) throw error;
+
+              // --- PERUBAHAN DIMULAI DI SINI ---
+
+              // 1. Ambil data lengkap dari tabel 'profiles'
+              const { data: profile, error: profileError } = await supabase
+                .from("profiles")
+                .select("nama_lengkap, role, approved") // Ambil juga nama_lengkap
+                .eq("id", data.user.id)
+                .single();
+
+              if (profileError || !profile) {
+                throw new Error("Gagal memverifikasi data pengguna.");
+              }
+
+              if (!profile.approved) {
+                await supabase.auth.signOut(); // Pastikan logout jika akun belum disetujui
+                throw new Error("Akun Anda belum disetujui oleh administrator.");
+              }
+
+              // 2. Simpan data profil ke localStorage
+              localStorage.setItem(
+                "userProfile",
+                JSON.stringify({
+                  nama_lengkap: profile.nama_lengkap,
+                  role: profile.role,
+                })
+              );
+
+              // --- PERUBAHAN SELESAI ---
+
+              showNotification("Login berhasil! Mengarahkan...", "success");
+
+              // Logika pengalihan halaman berdasarkan role
+              const destination = profile.role.toLowerCase() === "admin" ? "admin/dashboard-admin.html" : "programmer/dashboard-programmer.html";
+
+              setTimeout(() => {
+                window.location.href = destination;
+              }, 1500);
+            } catch (err) {
+              showNotification(err.message, "error");
+              // Pastikan tombol kembali normal jika terjadi error
               loginButton.disabled = false;
               loginButton.innerHTML = originalText;
-              return;
             }
-
-            const { data: profile, error: profileError } = await supabase.from("profiles").select("role, approved").eq("id", data.user.id).single();
-
-            if (profileError || !profile) {
-              showNotification("Gagal memverifikasi pengguna.", "error");
-              supabase.auth.signOut(); // Logout jika profil tidak ditemukan
-              loginButton.disabled = false;
-              loginButton.innerHTML = originalText;
-              return;
-            }
-
-            if (!profile.approved) {
-              showNotification("Akun Anda belum disetujui oleh administrator.", "error");
-              supabase.auth.signOut();
-              loginButton.disabled = false;
-              loginButton.innerHTML = originalText;
-              return;
-            }
-
-            showNotification("Login berhasil! Mengarahkan...", "success");
-            // PERBAIKAN: Mengubah pengecekan menjadi case-insensitive
-            const destination = profile.role.toLowerCase() === "admin" ? "admin/dashboard-admin.html" : "programmer/dashboard-programmer.html";
-            setTimeout(() => {
-              window.location.href = destination;
-            }, 1500);
           });
         }
 

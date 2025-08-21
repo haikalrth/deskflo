@@ -23,7 +23,7 @@
   </head>
   <body class="text-slate-800">
     <div class="flex h-screen">
-      <!-- Sidebar (Sama seperti di Dashboard) -->
+      <!-- Sidebar -->
       <aside class="w-64 bg-white shadow-sm flex-shrink-0">
         <div class="p-6 flex items-center space-x-3">
           <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
@@ -106,10 +106,10 @@
             </div>
             <div class="relative">
               <div id="profile-button" class="flex items-center space-x-3 cursor-pointer">
-                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=A" alt="Admin Avatar" />
+                <img id="topbar-user-avatar" class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=A" alt="Admin Avatar" />
                 <div>
-                  <p class="font-semibold text-sm">Andi Wijaya</p>
-                  <p class="text-xs text-slate-500">Admin</p>
+                  <p id="topbar-user-name" class="font-semibold text-sm">Nama Pengguna</p>
+                  <p id="topbar-user-role" class="text-xs text-slate-500">Role</p>
                 </div>
               </div>
               <div id="profile-dropdown" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
@@ -137,7 +137,7 @@
                 <div class="p-6 md:p-8">
                   <div class="flex items-center space-x-6">
                     <div class="relative">
-                      <img id="avatar-preview" class="w-24 h-24 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=A" alt="Andi Wijaya's avatar" />
+                      <img id="avatar-preview" class="w-24 h-24 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=A" alt="User's avatar" />
                       <div class="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                         <label for="avatar-upload" class="cursor-pointer text-white">
                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -198,7 +198,6 @@
                       <div class="relative mt-1">
                         <input type="password" id="current-password" class="password-field block w-full px-4 py-2.5 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                       </div>
-                      <!-- PERUBAHAN: Pesan validasi untuk kata sandi saat ini -->
                       <p id="current-password-match-message" class="text-xs text-emerald-600 mt-2 hidden">
                         <svg class="inline w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
@@ -237,9 +236,14 @@
       </main>
     </div>
 
+    <!-- Memuat script shared-ui.js -->
+    <script type="module" src="../shared-ui.js"></script>
+
     <script type="module">
-      import { showNotification } from "../notifications.js";
       import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+      import { showNotification } from "../notifications.js";
+      // Impor fungsi dari shared-ui.js
+      import { populateTopbar, handleLogout } from "../shared-ui.js";
 
       const SUPABASE_URL = "https://dnyjsrlrfuhmnzuhzrux.supabase.co";
       const SUPABASE_ANON_KEY =
@@ -247,16 +251,13 @@
       const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       document.addEventListener("DOMContentLoaded", function () {
-        // --- URL Parameter for Return Navigation ---
         const urlParams = new URLSearchParams(window.location.search);
         const returnPage = urlParams.get("from") || "dashboard-admin.html";
 
-        // --- Elemen Form ---
         const profileForm = document.getElementById("profile-form");
         const saveProfileButton = document.getElementById("save-profile-button");
         const securityForm = document.getElementById("security-form");
 
-        // --- Fungsi untuk memuat data profil ---
         async function loadProfileData() {
           const {
             data: { session },
@@ -283,7 +284,6 @@
           }
         }
 
-        // --- Event Listener untuk simpan profil ---
         if (profileForm) {
           profileForm.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -316,6 +316,17 @@
 
               showNotification(result.message, "success");
 
+              // --- PERBAIKAN KUNCI DI SINI ---
+              // 1. Ambil data profil yang ada dari localStorage
+              const currentProfile = JSON.parse(localStorage.getItem("userProfile")) || {};
+              // 2. Update nama lengkapnya dengan data baru dari form
+              currentProfile.nama_lengkap = profileData.nama_lengkap;
+              // 3. Simpan kembali ke localStorage
+              localStorage.setItem("userProfile", JSON.stringify(currentProfile));
+              // 4. Panggil fungsi untuk langsung memperbarui tampilan top bar di halaman ini
+              populateTopbar();
+              // --- AKHIR PERBAIKAN ---
+
               setTimeout(() => {
                 window.location.href = returnPage;
               }, 1500);
@@ -328,12 +339,59 @@
           });
         }
 
-        // --- Event Listener untuk ganti password ---
         if (securityForm) {
+          // --- Logika Keamanan ---
+          const currentPasswordInput = document.getElementById("current-password");
+          const newPasswordInput = document.getElementById("new-password");
+          const confirmPasswordInput = document.getElementById("confirm-password");
+          const passwordMatchMessage = document.getElementById("password-match-message");
+          const currentPasswordMatchMessage = document.getElementById("current-password-match-message");
+          const savePasswordButton = document.getElementById("save-password-button");
+          const cancelSecurityButton = document.getElementById("cancel-security-button");
+          let validationTimeout;
+
+          if (currentPasswordInput) {
+            currentPasswordInput.addEventListener("input", () => {
+              clearTimeout(validationTimeout);
+              currentPasswordMatchMessage.classList.add("hidden");
+              const password = currentPasswordInput.value;
+
+              if (password.length > 5) {
+                validationTimeout = setTimeout(async () => {
+                  const email = document.getElementById("email").value;
+                  if (!email) return;
+
+                  const { error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                  });
+
+                  if (!error) {
+                    currentPasswordMatchMessage.classList.remove("hidden");
+                  }
+                }, 500);
+              }
+            });
+          }
+
+          const checkPasswordMatch = () => {
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            if (confirmPassword.length > 0 && newPassword === confirmPassword) {
+              passwordMatchMessage.classList.remove("hidden");
+            } else {
+              passwordMatchMessage.classList.add("hidden");
+            }
+          };
+
+          securityForm.querySelectorAll(".password-field").forEach((field) => {
+            field.addEventListener("input", checkPasswordMatch);
+          });
+
           securityForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            const newPassword = document.getElementById("new-password").value;
-            const confirmPassword = document.getElementById("confirm-password").value;
+            const newPassword = newPasswordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
 
             if (newPassword !== confirmPassword) {
               showNotification("Kata sandi baru tidak cocok.", "error");
@@ -344,10 +402,9 @@
               return;
             }
 
-            const saveButton = document.getElementById("save-password-button");
-            const originalButtonText = saveButton.innerHTML;
-            saveButton.disabled = true;
-            saveButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
+            const originalButtonText = savePasswordButton.innerHTML;
+            savePasswordButton.disabled = true;
+            savePasswordButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
 
             const { error } = await supabase.auth.updateUser({ password: newPassword });
 
@@ -356,26 +413,42 @@
             } else {
               showNotification("Kata sandi berhasil diubah!", "success");
               securityForm.reset();
-              // PERUBAHAN: Sembunyikan pesan validasi setelah berhasil
-              document.getElementById("current-password-match-message").classList.add("hidden");
+              currentPasswordMatchMessage.classList.add("hidden");
+              passwordMatchMessage.classList.add("hidden");
               setTimeout(() => {
-                profileTab.click();
+                document.getElementById("profile-tab").click();
               }, 500);
             }
 
-            saveButton.disabled = false;
-            saveButton.innerHTML = originalButtonText;
+            savePasswordButton.disabled = false;
+            savePasswordButton.innerHTML = originalButtonText;
           });
+
+          if (cancelSecurityButton) {
+            cancelSecurityButton.addEventListener("click", () => {
+              document.getElementById("profile-tab").click();
+            });
+          }
         }
 
-        // --- Panggil fungsi untuk memuat data saat halaman dibuka ---
         loadProfileData();
 
-        // --- Logika UI Lainnya (Dropdown, Tabs, dll) ---
+        // --- Logika UI Umum ---
         const profileButton = document.getElementById("profile-button");
         const profileDropdown = document.getElementById("profile-dropdown");
         const notificationButton = document.getElementById("notification-button");
         const notificationDropdown = document.getElementById("notification-dropdown");
+        const profileTab = document.getElementById("profile-tab");
+        const securityTab = document.getElementById("security-tab");
+        const profileContent = document.getElementById("profile-content");
+        const securityContent = document.getElementById("security-content");
+        const tabGlider = document.getElementById("tab-glider");
+        const avatarUpload = document.getElementById("avatar-upload");
+        const avatarUploadButton = document.getElementById("avatar-upload-button");
+        const avatarPreview = document.getElementById("avatar-preview");
+        const editProfileLink = document.getElementById("edit-profile-link");
+        const logoutButton = document.getElementById("logout-button");
+        const cancelProfileButton = document.getElementById("cancel-profile-button");
 
         function closeAllDropdowns() {
           if (profileDropdown && !profileDropdown.classList.contains("hidden")) {
@@ -399,22 +472,36 @@
           }
         }
 
-        if (profileButton) {
-          profileButton.addEventListener("click", (e) => {
-            e.stopPropagation();
-            toggleDropdown(profileDropdown);
+        function moveGlider(targetTab) {
+          const tabRect = targetTab.getBoundingClientRect();
+          const navRect = targetTab.parentElement.getBoundingClientRect();
+          tabGlider.style.width = `${tabRect.width}px`;
+          tabGlider.style.left = `${tabRect.left - navRect.left}px`;
+        }
+
+        if (profileTab && securityTab && profileContent && securityContent && tabGlider) {
+          moveGlider(profileTab);
+          profileTab.addEventListener("click", (e) => {
+            e.preventDefault();
+            securityContent.classList.add("hidden");
+            profileContent.classList.remove("hidden");
+            profileTab.classList.add("text-indigo-600");
+            profileTab.classList.remove("text-slate-500");
+            securityTab.classList.add("text-slate-500");
+            securityTab.classList.remove("text-indigo-600");
+            moveGlider(profileTab);
+          });
+          securityTab.addEventListener("click", (e) => {
+            e.preventDefault();
+            profileContent.classList.add("hidden");
+            securityContent.classList.remove("hidden");
+            securityTab.classList.add("text-indigo-600");
+            securityTab.classList.remove("text-slate-500");
+            profileTab.classList.add("text-slate-500");
+            profileTab.classList.remove("text-indigo-600");
+            moveGlider(securityTab);
           });
         }
-        if (notificationButton) {
-          notificationButton.addEventListener("click", (e) => {
-            e.stopPropagation();
-            toggleDropdown(notificationDropdown);
-          });
-        }
-        window.addEventListener("click", () => closeAllDropdowns());
-        const avatarUpload = document.getElementById("avatar-upload");
-        const avatarUploadButton = document.getElementById("avatar-upload-button");
-        const avatarPreview = document.getElementById("avatar-preview");
 
         const handleFileSelect = (event) => {
           const file = event.target.files[0];
@@ -427,160 +514,18 @@
           }
         };
 
-        if (avatarUpload) {
-          avatarUpload.addEventListener("change", handleFileSelect);
-        }
-        if (avatarUploadButton) {
-          avatarUploadButton.addEventListener("change", handleFileSelect);
-        }
-        const profileTab = document.getElementById("profile-tab");
-        const securityTab = document.getElementById("security-tab");
-        const profileContent = document.getElementById("profile-content");
-        const securityContent = document.getElementById("security-content");
-        const tabGlider = document.getElementById("tab-glider");
-
-        function moveGlider(targetTab) {
-          const tabRect = targetTab.getBoundingClientRect();
-          const navRect = targetTab.parentElement.getBoundingClientRect();
-          tabGlider.style.width = `${tabRect.width}px`;
-          tabGlider.style.left = `${tabRect.left - navRect.left}px`;
-        }
-
-        if (profileTab && securityTab && profileContent && securityContent && tabGlider) {
-          moveGlider(profileTab);
-
-          profileTab.addEventListener("click", (e) => {
-            e.preventDefault();
-            securityContent.classList.add("hidden");
-            profileContent.classList.remove("hidden");
-
-            profileTab.classList.add("text-indigo-600");
-            profileTab.classList.remove("text-slate-500");
-            securityTab.classList.add("text-slate-500");
-            securityTab.classList.remove("text-indigo-600");
-
-            moveGlider(profileTab);
-          });
-
-          securityTab.addEventListener("click", (e) => {
-            e.preventDefault();
-            profileContent.classList.add("hidden");
-            securityContent.classList.remove("hidden");
-
-            securityTab.classList.add("text-indigo-600");
-            securityTab.classList.remove("text-slate-500");
-            profileTab.classList.add("text-slate-500");
-            profileTab.classList.remove("text-indigo-600");
-
-            moveGlider(securityTab);
-          });
-        }
-        const cancelProfileButton = document.getElementById("cancel-profile-button");
-
-        if (cancelProfileButton) {
-          cancelProfileButton.addEventListener("click", () => {
-            window.location.href = returnPage;
-          });
-        }
-
-        const newPasswordInput = document.getElementById("new-password");
-        const confirmPasswordInput = document.getElementById("confirm-password");
-        const passwordMatchMessage = document.getElementById("password-match-message");
-        const savePasswordButton = document.getElementById("save-password-button");
-        const cancelSecurityButton = document.getElementById("cancel-security-button");
-
-        // --- PERUBAHAN: Logika validasi kata sandi ---
-        const currentPasswordInput = document.getElementById("current-password");
-        const currentPasswordMatchMessage = document.getElementById("current-password-match-message");
-        let validationTimeout;
-
-        if (currentPasswordInput) {
-          currentPasswordInput.addEventListener("input", () => {
-            // Hapus timeout sebelumnya untuk debounce
-            clearTimeout(validationTimeout);
-            currentPasswordMatchMessage.classList.add("hidden"); // Sembunyikan pesan saat mengetik
-            const password = currentPasswordInput.value;
-
-            if (password.length > 5) {
-              // Hanya validasi jika panjangnya cukup
-              validationTimeout = setTimeout(async () => {
-                const email = document.getElementById("email").value;
-                if (!email) return; // Tidak bisa validasi tanpa email
-
-                // Coba sign-in untuk memvalidasi password
-                const { error } = await supabase.auth.signInWithPassword({
-                  email: email,
-                  password: password,
-                });
-
-                if (error) {
-                  // Jika ada error (misal: "Invalid login credentials"), password salah
-                  currentPasswordMatchMessage.classList.add("hidden");
-                } else {
-                  // Jika tidak ada error, password benar
-                  currentPasswordMatchMessage.classList.remove("hidden");
-                }
-              }, 500); // Tunggu 500ms setelah user berhenti mengetik
-            }
-          });
-        }
-
-        if (securityForm) {
-          const checkPasswordFields = () => {
-            const allFields = securityForm.querySelectorAll(".password-field");
-            let allFilled = true;
-            allFields.forEach((field) => {
-              if (field.value.trim() === "") {
-                allFilled = false;
-              }
-            });
-
-            if (allFilled && newPasswordInput.value === confirmPasswordInput.value) {
-              savePasswordButton.classList.remove("hidden");
-            } else {
-              savePasswordButton.classList.add("hidden");
-            }
-          };
-
-          const checkPasswordMatch = () => {
-            const newPassword = newPasswordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
-
-            if (confirmPassword.length > 0 && newPassword === confirmPassword) {
-              passwordMatchMessage.classList.remove("hidden");
-            } else {
-              passwordMatchMessage.classList.add("hidden");
-            }
-          };
-
-          securityForm.querySelectorAll(".password-field").forEach((field) => {
-            field.addEventListener("input", () => {
-              checkPasswordFields();
-              checkPasswordMatch();
-            });
-          });
-
-          if (cancelSecurityButton) {
-            cancelSecurityButton.addEventListener("click", () => {
-              profileTab.click();
-            });
-          }
-        }
-
-        const editProfileLink = document.getElementById("edit-profile-link");
+        if (avatarUpload) avatarUpload.addEventListener("change", handleFileSelect);
+        if (avatarUploadButton) avatarUploadButton.addEventListener("change", handleFileSelect);
+        if (profileButton) profileButton.addEventListener("click", (e) => e.stopPropagation() || toggleDropdown(profileDropdown));
+        if (notificationButton) notificationButton.addEventListener("click", (e) => e.stopPropagation() || toggleDropdown(notificationDropdown));
+        window.addEventListener("click", () => closeAllDropdowns());
+        if (logoutButton) logoutButton.addEventListener("click", (e) => e.preventDefault() || handleLogout());
+        if (cancelProfileButton) cancelProfileButton.addEventListener("click", () => (window.location.href = returnPage));
         if (editProfileLink) {
           editProfileLink.addEventListener("click", (e) => {
             e.preventDefault();
             showNotification("Anda sudah berada di halaman Edit Profil.", "success");
             closeAllDropdowns();
-          });
-        }
-        const logoutButton = document.getElementById("logout-button");
-        if (logoutButton) {
-          logoutButton.addEventListener("click", (e) => {
-            e.preventDefault();
-            console.log("Logging out...");
-            window.location.href = "../authentication.html?status=logout_success";
           });
         }
       });

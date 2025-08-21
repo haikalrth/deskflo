@@ -64,7 +64,7 @@
               </svg>
               Account Approval
             </div>
-            <span class="w-5 h-5 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center">2</span>
+            <span id="approval-count-badge" class="w-5 h-5 bg-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center">0</span>
           </a>
           <a href="jobs-admin.html" class="flex items-center px-4 py-3 mt-2 text-slate-600 hover:bg-slate-100 rounded-lg">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" viewBox="0 0 20 20" fill="currentColor">
@@ -109,10 +109,10 @@
             </div>
             <div class="relative">
               <div id="profile-button" class="flex items-center space-x-3 cursor-pointer">
-                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=A" alt="Admin Avatar" />
+                <img id="topbar-user-avatar" class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=U" alt="User Avatar" />
                 <div>
-                  <p class="font-semibold text-sm">Andi Wijaya</p>
-                  <p class="text-xs text-slate-500">Admin</p>
+                  <p id="topbar-user-name" class="font-semibold text-sm">Nama Pengguna</p>
+                  <p id="topbar-user-role" class="text-xs text-slate-500">Role</p>
                 </div>
               </div>
               <div id="profile-dropdown" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
@@ -136,26 +136,7 @@
                   </tr>
                 </thead>
                 <tbody id="request-table-body">
-                  <tr class="bg-white border-b hover:bg-slate-50">
-                    <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">Rina Hartati</td>
-                    <td class="px-6 py-4">rina.h@example.com</td>
-                    <td class="px-6 py-4">1234567999</td>
-                    <td class="px-6 py-4">08 Agu 2025</td>
-                    <td class="px-6 py-4 text-center space-x-3">
-                      <button class="approve-button font-medium text-emerald-600 hover:underline">Setujui</button>
-                      <button class="reject-button font-medium text-rose-600 hover:underline">Tolak</button>
-                    </td>
-                  </tr>
-                  <tr class="bg-white border-b hover:bg-slate-50">
-                    <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">Gilang Pratama</td>
-                    <td class="px-6 py-4">gilang.p@example.com</td>
-                    <td class="px-6 py-4">1234567888</td>
-                    <td class="px-6 py-4">07 Agu 2025</td>
-                    <td class="px-6 py-4 text-center space-x-3">
-                      <button class="approve-button font-medium text-emerald-600 hover:underline">Setujui</button>
-                      <button class="reject-button font-medium text-rose-600 hover:underline">Tolak</button>
-                    </td>
-                  </tr>
+                  <!-- Data akan diisi oleh JavaScript -->
                 </tbody>
               </table>
             </div>
@@ -202,14 +183,33 @@
       </div>
     </div>
 
+    <script type="module" src="../shared-ui.js"></script>
+
     <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
       import { showNotification } from "../notifications.js";
-      // --- Dropdown Logic ---
+      import { handleLogout } from "../shared-ui.js";
+
+      const SUPABASE_URL = "https://dnyjsrlrfuhmnzuhzrux.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRueWpzcmxyZnVobW56dWh6cnV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NDk0MjcsImV4cCI6MjA3MDIyNTQyN30.sK3BqfLMS36-N5lNuED3ehYZ6QbDgkdTpTngKPv20x8";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // --- UI Elements ---
       const profileButton = document.getElementById("profile-button");
       const profileDropdown = document.getElementById("profile-dropdown");
       const notificationButton = document.getElementById("notification-button");
       const notificationDropdown = document.getElementById("notification-dropdown");
+      const approvalModal = document.getElementById("approval-modal");
+      const rejectModal = document.getElementById("reject-modal");
+      const requestTableBody = document.getElementById("request-table-body");
+      const approvalConfirmationText = document.getElementById("approval-confirmation-text");
+      const rejectConfirmationText = document.getElementById("reject-confirmation-text");
+      const confirmApproveButton = document.getElementById("confirm-approve-button");
+      const confirmRejectButton = document.getElementById("confirm-reject-button");
+      const approvalCountBadge = document.getElementById("approval-count-badge");
 
+      // --- Functions ---
       function closeDropdown(dropdown) {
         if (dropdown && !dropdown.classList.contains("hidden")) {
           dropdown.classList.add("opacity-0", "scale-95");
@@ -219,11 +219,7 @@
 
       function toggleDropdown(dropdownToToggle) {
         const isHidden = dropdownToToggle.classList.contains("hidden");
-
-        // Close all dropdowns first
         closeAllDropdowns();
-
-        // If the clicked dropdown was hidden, open it
         if (isHidden) {
           dropdownToToggle.classList.remove("hidden");
           setTimeout(() => {
@@ -236,29 +232,6 @@
         closeDropdown(profileDropdown);
         closeDropdown(notificationDropdown);
       }
-
-      profileButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleDropdown(profileDropdown);
-      });
-
-      notificationButton.addEventListener("click", (e) => {
-        e.stopPropagation();
-        toggleDropdown(notificationDropdown);
-      });
-
-      window.addEventListener("click", (e) => {
-        closeAllDropdowns();
-      });
-
-      // --- Approval & Reject Modal Logic ---
-      const approvalModal = document.getElementById("approval-modal");
-      const rejectModal = document.getElementById("reject-modal");
-      const requestTableBody = document.getElementById("request-table-body");
-      const approvalConfirmationText = document.getElementById("approval-confirmation-text");
-      const rejectConfirmationText = document.getElementById("reject-confirmation-text");
-      const confirmApproveButton = document.getElementById("confirm-approve-button");
-      const confirmRejectButton = document.getElementById("confirm-reject-button");
 
       const openModal = (modal) => {
         modal.classList.remove("hidden");
@@ -276,12 +249,88 @@
         }
       };
 
+      async function fetchRequests() {
+        requestTableBody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-slate-500">Memuat data...</td></tr>`;
+        try {
+          const {
+            data: { session },
+            error: sessionError,
+          } = await supabase.auth.getSession();
+          if (sessionError || !session) {
+            window.location.href = "../authentication.html";
+            return;
+          }
+
+          const response = await fetch(`${SUPABASE_URL}/functions/v1/requests`, {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          });
+
+          if (!response.ok) throw new Error("Gagal mengambil data pengajuan.");
+
+          const requests = await response.json();
+          renderTable(requests);
+        } catch (error) {
+          requestTableBody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-red-500">Gagal memuat data: ${error.message}</td></tr>`;
+        }
+      }
+
+      function renderTable(requests) {
+        requestTableBody.innerHTML = "";
+        approvalCountBadge.textContent = requests.length;
+
+        if (requests.length === 0) {
+          requestTableBody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-slate-500">Tidak ada pengajuan akun baru.</td></tr>`;
+          return;
+        }
+
+        requests.forEach((req) => {
+          const row = document.createElement("tr");
+          row.className = "bg-white border-b hover:bg-slate-50";
+          row.dataset.requestId = req.id; // Simpan ID untuk aksi
+          row.dataset.email = req.email;
+          row.dataset.name = req.nama_lengkap;
+
+          // PERBAIKAN: Menggunakan kolom 'requested_at'
+          const requestDate = new Date(req.requested_at).toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+
+          row.innerHTML = `
+                <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">${req.nama_lengkap}</td>
+                <td class="px-6 py-4">${req.email}</td>
+                <td class="px-6 py-4">${req.npm}</td>
+                <td class="px-6 py-4">${requestDate}</td>
+                <td class="px-6 py-4 text-center space-x-3">
+                    <button class="approve-button font-medium text-emerald-600 hover:underline">Setujui</button>
+                    <button class="reject-button font-medium text-rose-600 hover:underline">Tolak</button>
+                </td>
+            `;
+          requestTableBody.appendChild(row);
+        });
+      }
+
+      // --- Event Listeners ---
+      profileButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown(profileDropdown);
+      });
+
+      notificationButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown(notificationDropdown);
+      });
+
+      window.addEventListener("click", () => closeAllDropdowns());
+
       requestTableBody.addEventListener("click", (e) => {
         const row = e.target.closest("tr");
         if (!row) return;
 
-        const name = row.cells[0].textContent;
-        const email = row.cells[1].textContent;
+        const requestId = row.dataset.requestId;
+        const name = row.dataset.name;
+        const email = row.dataset.email;
 
         if (e.target.classList.contains("approve-button")) {
           approvalConfirmationText.innerHTML = `Apakah Anda yakin ingin menyetujui dan mengirimkan undangan ke <strong class="text-slate-800">${name}</strong> di alamat email <strong class="text-slate-800">${email}</strong>?`;
@@ -292,12 +341,22 @@
             confirmApproveButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
 
             try {
-              // Simulate API call
-              await new Promise((resolve) => setTimeout(resolve, 1000));
-              // In a real app: await supabase.rpc('approve_user', { user_email: email });
+              const {
+                data: { session },
+              } = await supabase.auth.getSession();
+              const response = await fetch(`${SUPABASE_URL}/functions/v1/approve-request`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${session.access_token}`,
+                },
+                body: JSON.stringify({ requestId: requestId }),
+              });
+              const result = await response.json();
+              if (!response.ok) throw new Error(result.error);
 
               showNotification(`Undangan terkirim ke ${name}!`, "success");
-              row.remove();
+              fetchRequests(); // Muat ulang data
             } catch (error) {
               showNotification(`Gagal menyetujui: ${error.message}`, "error");
             } finally {
@@ -319,12 +378,22 @@
             confirmRejectButton.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-b-2 border-white mx-auto"></span>`;
 
             try {
-              // Simulate API call
-              await new Promise((resolve) => setTimeout(resolve, 1000));
-              // In a real app: await supabase.from('users').delete().eq('email', email);
+              const {
+                data: { session },
+              } = await supabase.auth.getSession();
+              const response = await fetch(`${SUPABASE_URL}/functions/v1/reject-request`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${session.access_token}`,
+                },
+                body: JSON.stringify({ requestId: requestId }),
+              });
+              const result = await response.json();
+              if (!response.ok) throw new Error(result.error);
 
               showNotification(`Pengajuan dari ${name} telah ditolak.`, "error");
-              row.remove();
+              fetchRequests(); // Muat ulang data
             } catch (error) {
               showNotification(`Gagal menolak: ${error.message}`, "error");
             } finally {
@@ -345,21 +414,16 @@
         });
       });
 
-      document.addEventListener("DOMContentLoaded", function () {
-        // --- Logout Logic ---
-        const logoutButton = document.getElementById("logout-button");
-        if (logoutButton) {
-          logoutButton.addEventListener("click", (e) => {
-            e.preventDefault(); // Mencegah link default berjalan
+      const logoutButton = document.getElementById("logout-button");
+      if (logoutButton) {
+        logoutButton.addEventListener("click", (e) => {
+          e.preventDefault();
+          handleLogout();
+        });
+      }
 
-            // Di aplikasi nyata, Anda mungkin akan menghapus token sesi di sini
-            console.log("Logging out...");
-
-            // Arahkan pengguna kembali ke halaman login
-            window.location.href = "../authentication.html?status=logout_success";
-          });
-        }
-      });
+      // Initial Load
+      fetchRequests();
     </script>
   </body>
 </html>

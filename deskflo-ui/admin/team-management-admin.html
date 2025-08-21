@@ -109,10 +109,10 @@
             </div>
             <div class="relative">
               <div id="profile-button" class="flex items-center space-x-3 cursor-pointer">
-                <img class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=A" alt="Admin Avatar" />
+                <img id="topbar-user-avatar" class="w-10 h-10 rounded-full object-cover" src="https://placehold.co/100x100/6366f1/ffffff?text=U" alt="User Avatar" />
                 <div>
-                  <p class="font-semibold text-sm">Andi Wijaya</p>
-                  <p class="text-xs text-slate-500">Admin</p>
+                  <p id="topbar-user-name" class="font-semibold text-sm">Nama Pengguna</p>
+                  <p id="topbar-user-role" class="text-xs text-slate-500">Role</p>
                 </div>
               </div>
               <div id="profile-dropdown" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 z-50 hidden opacity-0 transform scale-95">
@@ -195,8 +195,13 @@
       </div>
     </div>
 
+    <!-- PERUBAHAN: Memuat script shared-ui.js -->
+    <script type="module" src="../shared-ui.js"></script>
+
     <script type="module">
       import { showNotification } from "../notifications.js";
+      // PERUBAHAN: Impor handleLogout dari shared-ui.js
+      import { handleLogout } from "../shared-ui.js";
 
       const SUPABASE_URL = "https://dnyjsrlrfuhmnzuhzrux.supabase.co";
       const SUPABASE_ANON_KEY =
@@ -305,10 +310,10 @@
           memberListContainer.insertAdjacentHTML(
             "beforeend",
             `
-                <div class="flex items-center">
-                    <input id="member-${p.id}" value="${p.id}" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" ${isChecked}>
-                    <label for="member-${p.id}" class="ml-3 text-sm text-slate-600">${p.nama_lengkap}</label>
-                </div>`
+              <div class="flex items-center">
+                  <input id="member-${p.id}" value="${p.id}" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" ${isChecked}>
+                  <label for="member-${p.id}" class="ml-3 text-sm text-slate-600">${p.nama_lengkap}</label>
+              </div>`
           );
         });
       }
@@ -412,7 +417,7 @@
         }
       });
 
-      // --- [START] KODE PERBAIKAN DROPDOWN ---
+      // --- Dropdown Logic ---
       const profileButton = document.getElementById("profile-button");
       const profileDropdown = document.getElementById("profile-dropdown");
       const notificationButton = document.getElementById("notification-button");
@@ -458,13 +463,12 @@
       // Logout
       const logoutButton = document.getElementById("logout-button");
       if (logoutButton) {
+        // PERUBAHAN: Menggunakan fungsi handleLogout yang sudah terpusat
         logoutButton.addEventListener("click", (e) => {
           e.preventDefault();
-          console.log("Logging out...");
-          window.location.href = "../authentication.html?status=logout_success";
+          handleLogout();
         });
       }
-      // --- [END] KODE PERBAIKAN DROPDOWN ---
 
       document.addEventListener("DOMContentLoaded", fetchInitialData);
     </script>
